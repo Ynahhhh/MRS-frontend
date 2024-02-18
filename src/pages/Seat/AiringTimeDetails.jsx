@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import EventSeatIcon from '@mui/icons-material/EventSeat';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
-import { Box } from '@mui/material';
 import { Box, Typography } from '@mui/material';
 import styled from '@emotion/styled';
 
