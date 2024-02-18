@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import EventSeatIcon from '@mui/icons-material/EventSeat';
 import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
+import { Box } from '@mui/material';
 
 const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
     const [selectedSeats, setSelectedSeats] = useState([]);
+    console.log(selectedSeats);
 
     useEffect(() => {
         onSelectedSeatsChange(selectedSeats);
@@ -11,7 +14,7 @@ const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
 
     if (!selectedTime) return null;
 
-    const { a_price, a_type, a_cinema, a_seat } = selectedTime;
+    const { a_price, a_type, a_cinema, a_seat, a_id, movie_id } = selectedTime;
 
     const handleSeatClick = (seat) => {
         setSelectedSeats(prevSelectedSeats => {
@@ -75,7 +78,19 @@ const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
             </div>
             <Button onClick={handleSelectAllClick}>Select All</Button>
             <Button onClick={handleUnselectAllClick}>Unselect All</Button>
+
+            <Box>
+                <Button
+                    variant="outlined"  
+                    component={Link} 
+                    to={`/details/${movie_id}/${a_id}${selectedSeats.length > 0 ? `/${JSON.stringify(selectedSeats)}` : ''}`}
+                    style={{ width: '100%', marginTop: '30px' }}
+                >
+                    Proceed to Reservation
+                </Button>
+            </Box>
         </div>
+        
     );
 };
 

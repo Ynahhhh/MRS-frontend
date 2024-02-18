@@ -85,8 +85,6 @@ function Seat() {
     // Function to handle selected seats changes
     const handleSelectedSeatsChange = (seats) => {
         setSelectedSeats(seats);
-        // You can perform any necessary actions with the selected seats here
-        console.log('Selected seats:', seats);
     };
 
     const handleTimeSelection = (time) => {

@@ -1,0 +1,126 @@
+.container1{
+    text-align: center;
+    width: 100%;
+    margin-left: 15px;
+}
+
+.container2{
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 2em;
+}
+
+.reservation{
+    background-color: rgb(231, 233, 233);
+    width: 40em;
+    background-color: rgba(255, 255, 255, 0.7); /* 0 (fully transparent) and 1 (fully opaque) */
+}
+
+.title{
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+}
+
+.customer{
+    margin-top: 15px;
+}
+
+.text{
+    display: flex;
+    margin-left: 10px;
+}
+
+.movie{
+    margin-top: 15px;
+}
+
+.seat-cont{
+    background-color: rgb(231, 233, 233);
+    width: 40em;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.table{
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.seat-btn{
+    margin: 180px 5px 15px 475px
+}
+
+.payment{
+    background-color: rgb(231, 233, 233);
+    width: 40em;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.payIcon{
+    width: 103px; 
+    height: 100px;
+    margin: 25px 0px -15px 140px;
+}
+
+.modalContent{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: whitesmoke;
+    box-shadow: 24;
+    box-shadow: inset -8px -8px 12px rgb(185, 191, 194),
+                inset 8px 8px 12px rgb(215, 218, 219);
+    border-radius: 10px;
+}
+
+.modalContent h2{
+    text-align: center;
+}
+
+.modalContent p{
+    margin-left: 95px;
+    display: flex;
+    flex-direction: column;
+}
+
+.addInfo{
+    font-style: italic;
+}
+
+.successContent{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 450px;
+    text-align: center;
+    background-color: whitesmoke;
+    box-shadow: 24;
+    box-shadow: inset -8px -8px 12px rgb(185, 191, 194),
+                inset 8px 8px 12px rgb(215, 218, 219);
+    border-radius: 10px;
+}
+
+.successContent h2{
+    text-align: center;
+}
+
+.success{
+    background-color: #9BBCCA;
+    height: 160px;
+}
+
+.successContent p{
+    text-align: center;
+}
+
+.successIcon{
+    width: 144px;
+    height: 140px;
+    align-content: center;
+    margin: 10px 0px 0px 0px;
+}
