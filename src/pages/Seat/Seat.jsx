@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Divider, MenuItem, Select, Typography } from '@mui/material';
+import { Box, Button, Divider, MenuItem, Select, Typography } from '@mui/material';
 import styled from '@emotion/styled';
-import EventSeatIcon from '@mui/icons-material/EventSeat';
-import { Link } from 'react-router-dom'
 import AiringTimeDetails from './AiringTimeDetails';
 
 const SeatBox = styled(Box)({
@@ -10,9 +8,10 @@ const SeatBox = styled(Box)({
     justifyContent:'space-between'
 });
 
-const MoreDetails = styled(Typography)({
+const MoreDetails = styled(Box)({
     display: 'flex',
     marginTop: '5px',
+    justifyContent: 'space-between'
 });
 
 function Seat() {
@@ -103,77 +102,100 @@ function Seat() {
 
     return (
         <SeatBox className="seat-cont" styled={{display: "flex", justifyContent: "space-between"}} >
-            <Box className="movie-details" style={{width: "25%", alignItems:"center", textAlign: "center" }}>
+            <Box className="movie-details" style={{width: "25%", alignItems:"center", textAlign: "center"}}>
                 
                 <Box className="movie-image" style={{ width: '100%' }}>
                     <Box className="movie-image" >
-                        <img src="" alt="" style={{ width: '300px', height: '400px' }} />                           
+                        <img src="" alt={movie.m_poster} style={{ width: '300px', height: '400px' }} />                           
                     </Box>
                 </Box>
                     <Typography variant='h5'><b>{movie.m_title}</b></Typography>
                     <Divider style={{background:'#0D99FF', marginTop: '10px' }}/>
-                    <Typography variant='body2' style={{marginTop:'10px' }}>{movie.m_desc}</Typography>
-                    <MoreDetails variant='subtitle1'><b>MPA FILM RATING: </b> {movie.m_mpa}</MoreDetails>
-                    <MoreDetails variant='subtitle1'><b>DURATION: </b> {movie.m_hrs} hrs</MoreDetails>
+                    <Typography variant='body1' style={{marginTop:'10px' }}>{movie.m_desc}</Typography>
+                    <Box style={{margin:'15px', marginTop: '10px'}}>
+                        <MoreDetails> 
+                            <Typography><b>GENRE: </b></Typography>
+                            <Typography> {movie.m_genre}</Typography>
+                        </MoreDetails>
+                        <MoreDetails>
+                            <Typography><b>MPA FILM RATING:</b></Typography>
+                            <Typography> {movie.m_mpa}</Typography>
+                        </MoreDetails>
+                        <MoreDetails>
+                            <Typography><b>DURATION:</b></Typography>
+                            <Typography> {movie.m_hrs} hrs</Typography>
+                        </MoreDetails>
+                    </Box>
+                    
             </Box>
-            <Box className="chair-details" style={{width: "40%" }}>
-                This is chair details
-                {selectedTime && (
-                            <p> {`Selected Time: ${formatTime(selectedTime.a_starttime)} - ${formatTime(selectedTime.a_endtime)}`}</p>
+            <Box className="chair-details" style={{ width: "45%", marginTop: '20px', padding: '20px 15px', background: '#fff', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' , height: '85vh', padding: '20px' }}>
+            {selectedTime && (
+            <Typography variant='h6' style={{alignContent:"center", textAlign:"center", margingTop:"30px", fontWeight:"600" }}>{`SEAT LAYOUT (${formatTime(selectedTime.a_starttime)} - ${formatTime(selectedTime.a_endtime)} )`}</Typography>
+            )}
+                {selectedTime === null && (
+                    <Typography style={{alignContent:"center", textAlign:"center", marginTop: "250px"}}> Display Seat Layout</Typography>
+                )}
+                <Box style={{width:'100%'}}>
+                    <AiringTimeDetails selectedTime={selectedTime} onSelectedSeatsChange={handleSelectedSeatsChange} />
 
-                        )}
-                <AiringTimeDetails selectedTime={selectedTime} onSelectedSeatsChange={handleSelectedSeatsChange} />
+                </Box>
 
             </Box>
-            <Box className="seat-tab" style={{width: "20%" }}>
+            <Box className="seat-tab" style={{width: "20%", padding: '30px'}}>
                 {/* SELECT DATE */}
+                <Typography variant='h6' style={{alignContent:"center", textAlign:"center", margingTop:"30px", fontWeight:"600" }}>TIME SLOT SECTION</Typography>
                 <Select
-        value={selectedDate}
-        onChange={handleChange}
-        displayEmpty
-        fullWidth
-    >
-        <MenuItem value="" disabled>
-            <em>Select a date</em>
-        </MenuItem>
-        {uniqueDates.map((date, index) => {
-            const currentDate = new Date();
-            const menuItemDate = new Date(date);
-            const yesterday = new Date();
-            yesterday.setDate(currentDate.getDate() - 1); // Get yesterday's date
-            const isDisabled = menuItemDate <= yesterday;
-
-            return (
-                <MenuItem
-                    key={index}
-                    value={date}
-                    disabled={isDisabled}
+                    value={selectedDate}
+                    onChange={handleChange}
+                    displayEmpty
+                    fullWidth
+                    style={{marginTop: "15px"}}
                 >
-                    {menuItemDate.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                </MenuItem>
-            );
-        })}
-    </Select>
+                    <MenuItem value="" disabled>
+                        <em>Select a date</em>
+                    </MenuItem>
+                    {uniqueDates.map((date, index) => {
+                        const currentDate = new Date();
+                        const menuItemDate = new Date(date);
+                        const yesterday = new Date();
+                        yesterday.setDate(currentDate.getDate() - 1); // Get yesterday's date
+                        const isDisabled = menuItemDate <= yesterday;
+
+                        return (
+                            <MenuItem
+                                key={index}
+                                value={date}
+                                disabled={isDisabled}
+                            >
+                                {menuItemDate.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                            </MenuItem>
+                        );
+                    })}
+                </Select>
                 {/* SELECT TIME SLOT */}
-                <Box>
-                <div>
-    <h2>Airing Times for {selectedDate}</h2>
-    {Array.isArray(airingTimes) && airingTimes.map((time) => {
-        const startTime = new Date(time.a_starttime);
-        const isDisabled = startTime <= new Date(); // Check if start time is past or present
-        return (
-            <button
-                key={time.a_id}
-                value={time.a_id}
-                onClick={() => handleTimeSelection(time)}
-                disabled={isDisabled} // Disable the button if start time is past or present
-                style={{ backgroundColor: isDisabled ? 'gray' : 'blue' }} // Change color based on disabled state
-            >
-                {`${time.a_type} : ${formatTime(time.a_starttime)} - ${formatTime(time.a_endtime)}`}
-            </button>
-        );
-    })}
-</div>
+                <Box style={{ marginTop: '25px'}}>
+                {selectedDate === "" && (
+                    <Typography style={{marginTop:'-20px', textAlign:"center"}} variant='body2'>
+                        Select date to display time slot {selectedDate}
+                    </Typography>
+                     )}
+                    {Array.isArray(airingTimes) && airingTimes.map((time) => {
+                        const startTime = new Date(time.a_starttime);
+                        const isDisabled = startTime <= new Date();
+                        return (
+                            <Button
+                                key={time.a_id}
+                                value={time.a_id}
+                                onClick={() => handleTimeSelection(time)}
+                                disabled={isDisabled} 
+                                style={{ backgroundColor: isDisabled ? 'secondary' : 'primary', marginBottom: '10px', width:'100%' }} // Change color based on disabled state
+
+                                variant='contained'
+                            >
+                                {`${time.a_type} : ${formatTime(time.a_starttime)} - ${formatTime(time.a_endtime)}`}
+                            </Button>
+                        );
+                    })}
                 </Box>
             </Box>
         </SeatBox>

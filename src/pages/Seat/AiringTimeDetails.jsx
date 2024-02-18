@@ -3,6 +3,14 @@ import EventSeatIcon from '@mui/icons-material/EventSeat';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import styled from '@emotion/styled';
+
+const MoreDetails = styled(Box)({
+    display: 'flex',
+    marginTop: '5px',
+    justifyContent: 'space-between'
+});
 
 const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
     const [selectedSeats, setSelectedSeats] = useState([]);
@@ -45,37 +53,45 @@ const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
                 const seat = a_seat[index];
                 const isSeatSelected = selectedSeats.includes(seat.position);
                 row.push(
-                    <Button
+                    <Box>
+                        <Button
                         key={index}
                         onClick={() => handleSeatClick(seat)}
                         disabled={seat.is_occupied}
                         variant={isSeatSelected ? "contained" : "outlined"}
-                        style={{ color: seat.is_occupied ? '#f57c00' : (isSeatSelected ? '#0288d1' : '#388e3c') }}
+                        style={{ color: seat.is_occupied ? '#f57c00' : (isSeatSelected ? '#0288d1' : '#388e3c'), padding:"-2px" }}
                     >
-                        <EventSeatIcon />
+                        {seat.position}
+                       
                     </Button>
+                    </Box>
+                    
                 );
             }
             rows.push(
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box key={i} style={{ display: 'flex', justifyContent: 'space-between', marginBottom:'10px' }}>
                     {row}
-                </div>
+                </Box>
             );
         }
         return rows;
     };
 
     return (
-        <div>
-            <div>Price: {a_price}</div>
-            <div>Type: {a_type}</div>
-            <div>Cinema: {a_cinema}</div>
-            <div style={{ marginTop: '10px' }}>
-                <h4>Seat Grid</h4>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <Box >
+            <Box style={{marginTop: '10px', marginLeft: '500px'}}>
+            {selectedSeats.length === 0 ? (
+                <Button onClick={handleSelectAllClick}>Select All</Button>
+            ) : (
+                <Button onClick={handleUnselectAllClick}>Unselect All</Button>
+            )}
+            </Box>
+            <Box style={{ marginTop: '10px' , alignItems:"center", textAlign:"center", padding: "0px 50px"}}>
+                <Typography style={{ display: 'flex', flexDirection: 'column' }}>
+                    
                     {renderSeatGrid()}
-                </div>
-            </div>
+                </Typography>
+            </Box>
             <Button onClick={handleSelectAllClick}>Select All</Button>
             <Button onClick={handleUnselectAllClick}>Unselect All</Button>
 
@@ -89,8 +105,26 @@ const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
                     Proceed to Reservation
                 </Button>
             </Box>
-        </div>
-        
+                
+            <Box style={{display:"flex", justifyContent:"space-between" ,padding: "10px 40px"}}>
+                    <MoreDetails> 
+                        <Typography><b>PRICE: </b></Typography>
+                        <Typography> {a_price}</Typography>
+                    </MoreDetails>
+                    <MoreDetails> 
+                        <Typography><b>TYPE: </b></Typography>
+                        <Typography> {a_type}</Typography>
+                    </MoreDetails>
+                    <MoreDetails> 
+                        <Typography><b>CINEMA: </b></Typography>
+                        <Typography> {a_cinema}</Typography>
+                    </MoreDetails>
+
+            </Box>
+            
+            
+        </Box>
+       
     );
 };
 
