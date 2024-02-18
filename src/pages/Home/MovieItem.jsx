@@ -39,7 +39,7 @@ const MovieItem = ({ movie }) => {
           </Box>
           <MovieDetails>{movie.m_desc}</MovieDetails>
           <MoreTypography>
-              
+              <b>Genre:</b> {movie.m_genre} <b>|</b> <b>Duration:</b> {movie.m_hrs} hrs
           </MoreTypography>
           <Box>
             <Button component={Link} to={`/movies/${movie.m_id}`}>More Details</Button>
