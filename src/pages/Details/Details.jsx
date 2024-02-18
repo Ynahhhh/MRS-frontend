@@ -20,11 +20,11 @@ export default function Details() {
     // const { movieId } = useParams(); 
     const [movieDetails, setMovieDetails] = useState(null);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [seats, setSeats] = useState([]);
+    //const [seats, setSeats] = useState([]);
     const [airingTime, setAiringTime] = useState(null);
     // Get the dynamic part of the URL
     const movieId = window.location.pathname.split('/')[2];
-    const airingId = window.location.pathname.split('/')[2];
+    const airingId = window.location.pathname.split('/')[3];
     let decodedSelectedSeats = JSON.parse(decodeURIComponent(window.location.pathname.split('/')[4]));
     console.log(movieId);
 
@@ -111,12 +111,10 @@ export default function Details() {
     };
     
     const handleBackdropClick = (event) => {
-        // Prevent closing the modal if the backdrop is clicked
-        event.stopPropagation();
+        event.stopPropagation();    // Prevent closing the modal if the backdrop is clicked
     };
     const emptySelectedSeats = () => {
-        // Empty selected seats by resetting the state variable to an empty array
-        decodedSelectedSeats = []
+        decodedSelectedSeats = [];     // Empty selected seats by resetting the state variable to an empty array
     };
     const handleIncrement = () => {
         if (seniorCount < decodedSelectedSeats.length)
@@ -135,28 +133,28 @@ export default function Details() {
                     throw new Error('Failed to fetch movie details');
                 }
                 const data = await response.json();
-                // Extracting the date part
-                if (data && data.m_date) {
-                    data.m_date = data.m_date.substring(0, 10); // or data.m_date.split('T')[0];
-                }
-                // Extracting the time part from m_starttime
-                if (data && data.m_starttime) {
-                    data.m_starttime = data.m_starttime.substring(11, 16); // or data.m_starttime.split('T')[1].substring(0, 5);
-                }
+                // // Extracting the date part
+                // if (data && data.m_date) {
+                //     data.m_date = data.m_date.substring(0, 10); // or data.m_date.split('T')[0];
+                // }
+                // // Extracting the time part from m_starttime
+                // if (data && data.m_starttime) {
+                //     data.m_starttime = data.m_starttime.substring(11, 16); // or data.m_starttime.split('T')[1].substring(0, 5);
+                // }
 
-                // Extracting the time part from m_endtime
-                if (data && data.m_endtime) {
-                    data.m_endtime = data.m_endtime.substring(11, 16); // or data.m_endtime.split('T')[1].substring(0, 5);
-                }
-                // Calculate duration in hours and minutes
-                const startTime = new Date(`2000-01-01T${data.m_starttime}:00`);
-                const endTime = new Date(`2000-01-01T${data.m_endtime}:00`);
-                const durationMinutes = Math.round((endTime - startTime) / (1000 * 60)); // Time difference in minutes
+                // // Extracting the time part from m_endtime
+                // if (data && data.m_endtime) {
+                //     data.m_endtime = data.m_endtime.substring(11, 16); // or data.m_endtime.split('T')[1].substring(0, 5);
+                // }
+                // // Calculate duration in hours and minutes
+                // const startTime = new Date(`2000-01-01T${data.m_starttime}:00`);
+                // const endTime = new Date(`2000-01-01T${data.m_endtime}:00`);
+                // const durationMinutes = Math.round((endTime - startTime) / (1000 * 60)); // Time difference in minutes
 
-                const hours = Math.floor(durationMinutes / 60);
-                const minutes = durationMinutes % 60;
+                // const hours = Math.floor(durationMinutes / 60);
+                // const minutes = durationMinutes % 60;
 
-                data.duration = { hours, minutes };
+                // data.duration = { hours, minutes };
 
                 setMovieDetails(data);
             } catch (error) {
@@ -168,75 +166,74 @@ export default function Details() {
     }, [movieId]);
 
     useEffect(() => {
+        const fetchAiringTimeDetails = async () => {
+            try {
+                const response = await fetch(`http://localhost:5555/api/airing/${airingId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch airing time details');
+                }
+                const airingTimeData = await response.json();
+                // Here, you can update your component state with the fetched airing time details
+                setAiringTime(airingTimeData);
+            } catch (error) {
+                console.error('Error fetching airing time details:', error);
+            }
+        };
+    
+        fetchAiringTimeDetails();
+    }, [airingId]);
+
+    useEffect(() => {
         const fetchSeatDetails = async () => {
             try {
                 // Ensure movieId exists before fetching seat details
-                if (!movieId) {
+                if (!airingId) {
                     return;
                 }
     
-                const response = await fetch(`http://localhost:5555/api/movies/${movieId}`);
+                const response = await fetch(`http://localhost:5555/api/airing/${airingId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch seat details');
                 }
                 const seatData = await response.json();
-                // console.log(seatData);
-                const seatCount = seatData.length;
+                console.log(seatData);
+                //const seatCount = seatData.length;
     
             } catch (error) {
                 console.error('Error fetching seat details:', error);
             }
         };
     
-        if (movieId && movieDetails) {
+        if (airingId && airingTime) {
             fetchSeatDetails();
         }
-    }, [movieId, movieDetails, seniorCount]);
+    }, [airingId, airingTime, seniorCount]);
     // useEffect(() => {
     //     // console.log("Selected Seats:", decodedSelectedSeats);
     // }, [decodedSelectedSeats]);
     useEffect(() => {
         const calculateTotalPrice = () => {
-            if (movieDetails && decodedSelectedSeats) {
+            if (airingTime && decodedSelectedSeats) {
                 const seatCount = decodedSelectedSeats.length;
                 let totalPrice = 0;
     
-                if (movieDetails.m_type === 'REGULAR') {
-                  // .toUpperCase()
-                    const price = (seniorCount > 0) ? (movieDetails.m_price * 0.8 * seniorCount) : movieDetails.m_price;
-                    const basePrice = (seatCount - seniorCount) * movieDetails.m_price;
+                if (airingTime.a_type === 'regular') {
+                    //.toUpperCase()
+                    const price = (seniorCount > 0) ? (airingTime.a_price * 0.8 * seniorCount) : airingTime.a_price;
+                    const basePrice = (seatCount - seniorCount) * airingTime.a_price;
                     if(seniorCount > 0)
                         totalPrice = price + basePrice;
-                    else totalPrice = seatCount * movieDetails.m_price;
-                } else if (movieDetails.m_type === 'PREMIERE') {
-                  // .toUpperCase()
-                    totalPrice = seatCount * movieDetails.m_price;
+                    else totalPrice = seatCount * airingTime.a_price;
+                } else if (airingTime.a_type === 'premiere') {
+                    //.toUpperCase()
+                    totalPrice = seatCount * airingTime.a_price;
                 }
                 setTotalPrice(totalPrice);
             }
         };
     
         calculateTotalPrice();
-    }, [seniorCount, movieDetails, decodedSelectedSeats]);
-
-    useEffect(() => {
-      const fetchAiringTimeDetails = async () => {
-          try {
-              const response = await fetch(`http://localhost:5555/api/airing/${airingId}`);
-              if (!response.ok) {
-                  throw new Error('Failed to fetch airing time details');
-              }
-              const airingTimeData = await response.json();
-              // Here, you can update your component state with the fetched airing time details
-              setAiringTime(airingTimeData);
-          } catch (error) {
-              console.error('Error fetching airing time details:', error);
-          }
-      };
-  
-      fetchAiringTimeDetails();
-  }, [airingId]);
-  
+    }, [seniorCount, airingTime, decodedSelectedSeats]);
 
     function getCurrentDateTime() {
         // Create a new Date object with the current time and date
@@ -332,7 +329,7 @@ export default function Details() {
                             ) : null}
                         </Box>
                     </div>
-                    {movieDetails && (
+                    {movieDetails && airingTime && (
                         <div className='movie'>
                             <div className="text">
                                     <Typography  variant="h7">MOVIE DESCRIPTION</Typography>
@@ -343,27 +340,22 @@ export default function Details() {
                                 </Grid>
                                 <Grid item xs={4}></Grid>
                                 <Grid item xs={4}>
-                                  {airingTime ? (
                                       <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Type: {airingTime.a_type}</Typography>
-                                  ) : (
-                                      <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Type: Loading...</Typography>
-                                  )}
                                 </Grid>
                                 <Grid item xs={4}>
                                     <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Date: {movieDetails.m_date}</Typography>
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Start Time: {movieDetails.m_starttime}</Typography>
+                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Start Time: {airingTime.a_starttime}</Typography>
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>End Time: {movieDetails.m_endtime}</Typography>
+                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>End Time: {airingTime.a_endtime}</Typography>
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Duration: {movieDetails.duration.hours} hr {movieDetails.duration.minutes} min</Typography>
+                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Duration: {movieDetails.m_hrs} hrs</Typography>
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Price: PHP </Typography>
-                                    {/* {movieDetails.m_price.toFixed(2)} */}
+                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Price: PHP {airingTime.a_price}</Typography>
                                 </Grid>
                                 <Grid item xs={4}></Grid>
                                 <Grid item xs={4}>
@@ -483,7 +475,7 @@ export default function Details() {
                             <Typography variant='h5' sx={{ fontWeight: 'bold', mt: 2, mb: 2, ml: 12 }}>Confirm Payment</Typography>
                             <Typography>Name:   {firstName} {middleName} {lastName}</Typography>
                             <Typography>Reservation ID:  {currentDateTime}</Typography>
-                            <Typography>Amount to Pay:   PHP {totalPrice.toFixed(2)}</Typography>
+                            <Typography>Amount to Pay:   PHP {totalPrice}</Typography>
                             <Stack spacing={5} direction="row" marginTop={5} marginLeft={10} marginBottom={5}>
                                 <Button 
                                     variant='contained' 
