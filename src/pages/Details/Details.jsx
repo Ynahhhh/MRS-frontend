@@ -120,7 +120,7 @@ export default function Details() {
                 setPaymentConfirmed(false);
     
                 // Proceed to success modal
-                setOpenModal(true);
+                setOpenModal(false);
             }
         } catch (error) {
             console.error('Error submitting data:', error);
@@ -340,7 +340,7 @@ export default function Details() {
                                     />
                                 </Box>
                                 <Box display="flex" alignItems="center" mt={2} mb={3} width={200} height={20} justifyContent="space-between">
-                                    {!movieDetails || movieDetails.m_type !== 'premiere' ? (
+                                    {!airing || airing.a_type !== 'premiere' ? (
                                         <IconButton onClick={handleDecrement}>
                                             <RemoveIcon />
                                         </IconButton>
@@ -353,7 +353,7 @@ export default function Details() {
                                         inputProps={{ readOnly: true, style: { textAlign: 'center', height: '15px' } }}
                                         sx={{ width: '120px', textAlign: 'center', '& .MuiInputBase-input': { height: '40px' }, marginLeft: '10px' }}
                                     />
-                                    {!movieDetails || movieDetails.m_type !== 'premiere' ? (
+                                    {!airing || airing.a_type !== 'premiere' ? (
                                         <IconButton onClick={handleIncrement}>
                                             <AddIcon />
                                         </IconButton>
@@ -410,7 +410,6 @@ export default function Details() {
                                                     <TableRow>
                                                         <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Type: </Typography></TableCell>
                                                         <TableCell align="right"></TableCell>
-                                                        {/* {movieDetails ? movieDetails.m_type.toUpperCase() : '-'} */}
                                                     </TableRow>
                                                     <TableRow>
                                                         <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Number of Seats: </Typography></TableCell>
