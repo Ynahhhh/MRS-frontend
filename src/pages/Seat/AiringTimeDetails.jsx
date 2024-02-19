@@ -78,22 +78,22 @@ const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
 
     return (
         <Box >
-            <Box style={{marginTop: '10px', marginLeft: '500px'}}>
-            {selectedSeats.length === 0 ? (
-                <Button onClick={handleSelectAllClick}>Select All</Button>
-            ) : (
-                <Button onClick={handleUnselectAllClick}>Unselect All</Button>
-            )}
-            </Box>
+            
             <Box style={{ marginTop: '10px' , alignItems:"center", textAlign:"center", padding: "0px 50px"}}>
                 <Typography style={{ display: 'flex', flexDirection: 'column' }}>
                     
                     {renderSeatGrid()}
                 </Typography>
             </Box>
-            <Button onClick={handleSelectAllClick}>Select All</Button>
-            <Button onClick={handleUnselectAllClick}>Unselect All</Button>
-
+            {/* <Button onClick={handleSelectAllClick}>Select All</Button>
+            <Button onClick={handleUnselectAllClick}>Unselect All</Button> */}
+            <Box style={{marginTop: '15px', marginLeft: '431px'}}>
+                {selectedSeats.length === 0 ? (
+                    <Button variant='outlined' onClick={handleSelectAllClick}>Select All</Button>
+                ) : (
+                    <Button onClick={handleUnselectAllClick}>Unselect All</Button>
+                )}
+            </Box>
             <Box>
                 <Button
                     variant="outlined"  

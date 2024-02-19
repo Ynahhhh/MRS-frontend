@@ -1,27 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams, useLocation } from 'react-router-dom';
-import './Details.css';
+import { Link } from 'react-router-dom';
 import { Backdrop, Box, Button, Grid, IconButton, Modal, Paper, 
     Stack, Table, TableBody, TableCell, TableContainer, TableHead, 
-    TableRow, TextField, Typography } from '@mui/material';
+    TableRow, TextField, Typography, styled } from '@mui/material';
 import confirmPaymentIcon from '../../assets/secure-payment.png';
 import successPaymentIcon from '../../assets/verified.png';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+
+const StyledModal = styled(Modal)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+const GrayBackdrop = styled(Backdrop)`
+  background-color: rgba(0, 0, 0, 0.2);
+`;
 
 export default function Details() {
     const [openModal, setOpenModal] = useState(false);
     const [firstName, setFirstName] = useState('');
     const [middleName, setMiddleName] = useState('');
     const [lastName, setLastName] = useState('');
-    //const [selectedSeats, setSelectedSeats] = useState([]);
     const [paymentConfirmed, setPaymentConfirmed] = useState(false);
     const [seniorCount, setSeniorCount] = useState(0);
-    // const { movieId } = useParams(); 
     const [movieDetails, setMovieDetails] = useState(null);
     const [totalPrice, setTotalPrice] = useState(0);
-    //const [seats, setSeats] = useState([]);
     const [airingTime, setAiringTime] = useState(null);
+
     // Get the dynamic part of the URL
     const movieId = window.location.pathname.split('/')[2];
     const airingId = window.location.pathname.split('/')[3];
@@ -109,7 +115,6 @@ export default function Details() {
     const handleUpdateSeats = () => {
         emptySelectedSeats();
     };
-    
     const handleBackdropClick = (event) => {
         event.stopPropagation();    // Prevent closing the modal if the backdrop is clicked
     };
@@ -125,6 +130,7 @@ export default function Details() {
             setSeniorCount(prevCount => prevCount - 1);
         }
     };
+
     useEffect(() => {
         const fetchMovieDetails = async () => {
             try {
@@ -197,7 +203,6 @@ export default function Details() {
                 }
                 const seatData = await response.json();
                 console.log(seatData);
-                //const seatCount = seatData.length;
     
             } catch (error) {
                 console.error('Error fetching seat details:', error);
@@ -208,9 +213,7 @@ export default function Details() {
             fetchSeatDetails();
         }
     }, [airingId, airingTime, seniorCount]);
-    // useEffect(() => {
-    //     // console.log("Selected Seats:", decodedSelectedSeats);
-    // }, [decodedSelectedSeats]);
+ 
     useEffect(() => {
         const calculateTotalPrice = () => {
             if (airingTime && decodedSelectedSeats) {
@@ -231,7 +234,6 @@ export default function Details() {
                 setTotalPrice(totalPrice);
             }
         };
-    
         calculateTotalPrice();
     }, [seniorCount, airingTime, decodedSelectedSeats]);
 
@@ -258,82 +260,88 @@ export default function Details() {
     // Call the function to get the current date and time
     const currentDateTime = getCurrentDateTime();
     // console.log("Current Date and Time:", currentDateTime);
-    const MAX_ROWS_BEFORE_SCROLL = 3; // Maximum number of rows before enabling scroll
+    const MAX_ROWS_BEFORE_SCROLL = 5; // Maximum number of rows before enabling scroll
     const regular = (decodedSelectedSeats.length - seniorCount) * (movieDetails ? movieDetails.m_price : 0);
     // const discount = (movieDetails && movieDetails.m_type.toUpperCase() === 'REGULAR' && seniorCount > 0) ? (movieDetails.m_price * 0.8 * seniorCount) : 0;
 
     return (
-        <div className='container1'>
-            <div className='container2'>
-                <div className='reservation'>
-                    <div className='title'>
-                        <Typography  variant="h6" ml={1} fontWeight='bold'>RESERVATION DESCRIPTION</Typography>
-                        <Typography mt={1} mr={1} sx={{fontSize: 15}}>RESERVATION ID: {currentDateTime}</Typography>
-                    </div>
-                    <div className='customer'>
-                        <div className="text">
-                            <Typography  variant="h7">CUSTOMER DESCRIPTION</Typography>
-                        </div>
-                        <Box
-                            component="form"
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                '& > :not(style)': { m: 1, width: '23ch'},
-                            }}
-                            noValidate
-                            autoComplete="off"
-                        >
-                            <TextField
-                                id="fname" 
-                                label="First Name" 
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
-                                size="small" 
-                            />
-                            <TextField
-                                id="mname" 
-                                label="Middle Name" 
-                                variant="outlined"
-                                value={middleName}
-                                onChange={(e) => setMiddleName(e.target.value)}
-                                size="small"
-                            />
-                            <TextField 
-                                id="lname" 
-                                label="Last Name" 
-                                variant="outlined" 
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
-                                size="small"
-                            />
-                        </Box>
-                        <Box display="flex" alignItems="center" mt={2} mb={3} width={200} height={20} justifyContent="space-between">
-                            {!movieDetails || movieDetails.m_type !== 'premiere' ? (
-                                <IconButton onClick={handleDecrement}>
-                                    <RemoveIcon />
-                                </IconButton>
-                            ) : null}
-                            <TextField
-                                value={seniorCount}
-                                variant="outlined"
-                                label="Senior Citizens"
-                                size="small"
-                                inputProps={{ readOnly: true, style: { textAlign: 'center', height: '15px' } }}
-                                sx={{ width: '120px', textAlign: 'center', '& .MuiInputBase-input': { height: '40px' }, marginLeft: '10px' }}
-                            />
-                            {!movieDetails || movieDetails.m_type !== 'premiere' ? (
-                                <IconButton onClick={handleIncrement}>
-                                    <AddIcon />
-                                </IconButton>
-                            ) : null}
-                        </Box>
-                    </div>
-                    {movieDetails && airingTime && (
-                        <div className='movie'>
-                            <div className="text">
-                                    <Typography  variant="h7">MOVIE DESCRIPTION</Typography>
-                            </div>
+        <Box
+            sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                '& > *': {
+                width: 'calc(50% - 16px)',
+                margin: '8px',
+                },
+            }}
+        >
+            <Box sx={{ bgcolor: 'grey.300', height: 352 }} > 
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Typography variant="h6" ml={1} fontWeight='bold' sx={{ marginRight: 1 }}>RESERVATION DESCRIPTION</Typography>
+                    <Typography mt={0.5} ml={18} mr={1} sx={{ fontSize: 15 }}>RESERVATION ID: {currentDateTime}</Typography>
+                </Box>
+                <Box>
+                    <Typography ml={1} variant="h7">CUSTOMER DESCRIPTION</Typography>
+                </Box>
+                <Box
+                    component="form"
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        '& > :not(style)': { m: 1, width: '23ch'},
+                    }}
+                    noValidate
+                    autoComplete="off"
+                >
+                    <TextField
+                        id="fname" 
+                        label="First Name" 
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        size="small" 
+                    />
+                    <TextField
+                        id="mname" 
+                        label="Middle Name" 
+                        variant="outlined"
+                        value={middleName}
+                        onChange={(e) => setMiddleName(e.target.value)}
+                        size="small"
+                    />
+                    <TextField 
+                        id="lname" 
+                        label="Last Name" 
+                        variant="outlined" 
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        size="small"
+                    />
+                </Box>
+                <Box display="flex" alignItems="center" mt={2} mb={3} width={200} height={20} justifyContent="space-between">
+                    {!movieDetails || movieDetails.m_type !== 'premiere' ? (
+                        <IconButton onClick={handleDecrement}>
+                            <RemoveIcon />
+                        </IconButton>
+                    ) : null}
+                    <TextField
+                        value={seniorCount}
+                        variant="outlined"
+                        label="Senior Citizens"
+                        size="small"
+                        inputProps={{ readOnly: true, style: { textAlign: 'center', height: '15px' } }}
+                        sx={{ width: '120px', textAlign: 'center', '& .MuiInputBase-input': { height: '40px' }, marginLeft: '10px' }}
+                    />
+                    {!movieDetails || movieDetails.m_type !== 'premiere' ? (
+                        <IconButton onClick={handleIncrement}>
+                            <AddIcon />
+                        </IconButton>
+                    ) : null}
+                </Box>
+                {movieDetails && airingTime && (
+                        <Box>
+                            <Box>
+                                <Typography  variant="h7">MOVIE DESCRIPTION</Typography>
+                            </Box>
                             <Grid container spacing={2} ml={2} mt={0.02}>
                                 <Grid item xs={4}>
                                     <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Movie Title: {movieDetails.m_title}</Typography>
@@ -362,160 +370,178 @@ export default function Details() {
                                     <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>MPA FILM RATING: {movieDetails.m_mpa}</Typography>
                                 </Grid>
                             </Grid>
-                        </div>
+                        </Box>
                     )}
-                </div>
+            </Box>
 
-                <div className='seat-cont'>
-                    <div className='title'>
-                        <Typography  variant="h6" ml={1} fontWeight='bold'>SEAT RESERVED</Typography>
-                        <Typography mt={1} mr={2}>Total Number of Seats Reserved: {decodedSelectedSeats.length}</Typography>
-                    </div>
-                    <div className='table'>
-                        <TableContainer component={Paper} sx={{ width: '95%', maxHeight: MAX_ROWS_BEFORE_SCROLL * 40 + 20, overflowY: 'auto'  }}>
-                            <Table size="small" aria-label="a dense table">
-                                <TableHead sx={{ backgroundColor: '#BBE2EC', position: 'sticky', top: 0, zIndex: 1000 }}>
-                                    <TableRow>
-                                        <TableCell align='center'><Typography fontWeight='bold' fontSize='small'>SEAT</Typography></TableCell>
-                                        <TableCell align="center"><Typography fontWeight='bold' fontSize='small'>PRICE</Typography></TableCell>
+            <Box sx={{ bgcolor: 'grey.300', height: 352 }} > 
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Typography  variant="h6" ml={1} fontWeight='bold'>SEAT RESERVED</Typography>
+                    <Typography mt={0.5} ml={30} mr={1}>Total Number of Seats Reserved: {decodedSelectedSeats.length}</Typography>
+                </Box>
+                <Box sx={{ alignItems: 'center', justifyContent: 'center', marginTop: '10px', marginLeft: '15px' }}>
+                    <TableContainer component={Paper} sx={{ width: '98%', maxHeight: MAX_ROWS_BEFORE_SCROLL * 40 + 20, overflowY: 'auto'  }}>
+                        <Table size="small" aria-label="a dense table">
+                            <TableHead sx={{ backgroundColor: '#BBE2EC', position: 'sticky', top: 0, zIndex: 1000 }}>
+                                <TableRow>
+                                    <TableCell align='center'><Typography fontWeight='bold' fontSize='small'>SEAT</Typography></TableCell>
+                                    <TableCell align="center"><Typography fontWeight='bold' fontSize='small'>PRICE</Typography></TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody sx={{ backgroundColor: '#f0f0f0' }}>
+                                {decodedSelectedSeats.map((seat, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell align='center'>{seat}</TableCell>
+                                        <TableCell align='center'> PHP </TableCell>
+                                        {/* {movieDetails ? movieDetails.m_price.toFixed(2) : '-'} */}
+                                        {/* <TableCell>{seat}</TableCell> */}
+                                        {/* Display more properties of the seat if available*/ }
                                     </TableRow>
-                                </TableHead>
-                                <TableBody sx={{ backgroundColor: '#f0f0f0' }}>
-                                    {decodedSelectedSeats.map((seat, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell align='center'>{seat}</TableCell>
-                                            <TableCell align='center'> PHP </TableCell>
-                                            {/* {movieDetails ? movieDetails.m_price.toFixed(2) : '-'} */}
-                                            {/* <TableCell>{seat}</TableCell> */}
-                                            {/* Display more properties of the seat if available*/ }
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Box>
+                <Box sx={{ marginTop: '20px', marginLeft: '542px'}}>
+                    <Button
+                        as={Link}
+                        to={`/movies/${movieId}`}
+                        variant="contained" 
+                        onClick={handleUpdateSeats}
+                        sx={{
+                            width:'150px',
+                            top:'160px',
+                            left:'230px',
+                            textDecoration:'none'
+                        }}
+                    >
+                        Update Seats
+                    </Button> 
+                </Box>
+            </Box>
 
+            <Box sx={{ bgcolor: 'grey.300', height: 300 }} > 
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Typography  variant="h6" ml={1} fontWeight='bold'>PAYMENT BREAKDOWN</Typography>
+                </Box>
+                {/* {movieDetails && ( */}
+                    <Box sx={{ marginLeft: '13px', marginTop: '10px' }}>
+                        <TableContainer component={Paper} sx={{ width: '98%' }}>
+                            <Table size="small" aria-label="a dense table">
+                                <TableBody sx={{ backgroundColor: '#f0f0f0' }}>
+                                    <TableRow>
+                                        <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Type: </Typography></TableCell>
+                                        <TableCell align="right"></TableCell>
+                                        {/* {movieDetails ? movieDetails.m_type.toUpperCase() : '-'} */}
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Number of Seats: </Typography></TableCell>
+                                        <TableCell align="right">{decodedSelectedSeats.length}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Discounted Seats: [{seniorCount}]</Typography></TableCell>
+                                        <TableCell align="right">PHP </TableCell> 
+                                        {/* {discount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} */}
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Regular Seats: [{decodedSelectedSeats.length - seniorCount}]</Typography></TableCell>
+                                        <TableCell align="right">PHP {regular.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell></TableCell>
+                                        <TableCell align='right'><Typography fontWeight='bold' fontSize='small'>TOTAL AMOUNT TO PAY: PHP {totalPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography></TableCell>
+                                    </TableRow>
+                                </TableBody>
                             </Table>
                         </TableContainer>
-                    </div>
-                    <div className="seat-btn">
-                        <Button
-                            as={Link}
-                            to={`/movies/${movieId}`}
-                            variant="contained" 
-                            onClick={handleUpdateSeats}
-                            sx={{
-                                width:'150px',
-                                top:'160px',
-                                left:'230px',
-                                textDecoration:'none'
-                            }}
-                        >
-                            Update Seats
-                        </Button>   
-                    </div>
-                </div>
-
-                <div className='payment'>
-                    <div className='title'>
-                        <Typography  variant="h6" ml={1} fontWeight='bold'>PAYMENT BREAKDOWN</Typography>
-                    </div>
-                    {movieDetails && (
-                        <div className='table'>
-                            <TableContainer component={Paper} sx={{ width: '95%' }}>
-                                <Table size="small" aria-label="a dense table">
-                                    <TableBody sx={{ backgroundColor: '#f0f0f0' }}>
-                                        <TableRow>
-                                            <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Type: </Typography></TableCell>
-                                            <TableCell align="right"></TableCell>
-                                            {/* {movieDetails ? movieDetails.m_type.toUpperCase() : '-'} */}
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Number of Seats: </Typography></TableCell>
-                                            <TableCell align="right">{decodedSelectedSeats.length}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Discounted Seats: [{seniorCount}]</Typography></TableCell>
-                                            <TableCell align="right">PHP </TableCell> 
-                                            {/* {discount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} */}
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Regular Seats: [{decodedSelectedSeats.length - seniorCount}]</Typography></TableCell>
-                                            <TableCell align="right">PHP {regular.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell></TableCell>
-                                            <TableCell align='right'><Typography fontWeight='bold' fontSize='small'>TOTAL AMOUNT TO PAY: PHP {totalPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography></TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </div>
-                    )}
-
-                    <Stack spacing={10} direction="row" marginTop={2} marginBottom={1.5} marginLeft={52.5}>
-                        <Button 
-                            variant="contained" 
-                            onClick={handleOpenModal}
-                            sx={{
-                                width:'205px',
-                                borderRadius: '5px'
-                            }}
-                        >
-                            Proceed to Payment
-                        </Button>   
-                    </Stack>
-
-                    {/* Payment modal */}
-                    <Modal 
-                        open={openModal} 
-                        onClose={handleCloseModal} 
-                        BackdropComponent={Backdrop} 
-                        BackdropProps={{ onClick: handleBackdropClick }}
+                    </Box>
+                {/* )} */}
+                <Stack spacing={10} direction="row" marginTop={6} marginLeft={59.5}>
+                    <Button 
+                        variant="contained" 
+                        onClick={handleOpenModal}
+                        sx={{
+                            width:'205px',
+                            borderRadius: '5px'
+                        }}
                     >
-                        <Box className='modalContent'>
-                            <img src={confirmPaymentIcon} alt="Confirm Payment Icon" className='payIcon'/>
-                            <Typography variant='h5' sx={{ fontWeight: 'bold', mt: 2, mb: 2, ml: 12 }}>Confirm Payment</Typography>
-                            <Typography>Name:   {firstName} {middleName} {lastName}</Typography>
-                            <Typography>Reservation ID:  {currentDateTime}</Typography>
-                            <Typography>Amount to Pay:   PHP {totalPrice}</Typography>
-                            <Stack spacing={5} direction="row" marginTop={5} marginLeft={10} marginBottom={5}>
-                                <Button 
-                                    variant='contained' 
-                                    onClick={handleCloseModal} 
-                                    sx={{
-                                        width:'100px',
-                                        borderRadius: '5px',
-                                        backgroundColor: 'gray',
-                                        '&:hover': {
-                                            backgroundColor: 'gray',
-                                        },
-                                    }}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button 
-                                    variant='contained' 
-                                    onClick={(e) => handleConfirmPayment(e)}
-                                    sx={{
-                                        width:'100px',
-                                        borderRadius: '5px'
-                                    }}
-                                >
-                                    Confirm
-                                </Button>
-                            </Stack>
+                        Proceed to Payment
+                    </Button>   
+                </Stack>
+                {/* Payment modal */}
+                <StyledModal
+                    open={openModal}
+                    onClose={handleCloseModal}
+                    BackdropComponent={GrayBackdrop}
+                    BackdropProps={{ onClick: handleBackdropClick }}
+                >
+                    <Box
+                        sx={{
+                        width: '400px', // Adjust the width as needed
+                        backgroundColor: 'white', // Optional: Change the background color
+                        borderRadius: '10px', // Optional: Add border radius
+                        padding: '10px', // Optional: Add padding
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center', // Center the content horizontally
+                        }}
+                    >
+                        <img src={confirmPaymentIcon} alt="Confirm Payment Icon" style={{ width: '150px', height: '150px' }} />
+                        <Typography variant="h6" sx={{ mt: "5px", mb: "15px", fontWeight: 'bold' }}>CONFIRM PAYMENT</Typography>
+                        <Box>
+                            <Typography>Name: {firstName} {middleName} {lastName}</Typography>
+                            <Typography>Reservation ID: {currentDateTime}</Typography>
+                            <Typography>Amount to Pay:   PHP {totalPrice.toFixed(2)}</Typography>
                         </Box>
-                    </Modal>
-
+                        <Stack spacing={5} direction="row" marginTop={5} justifyContent="center">
+                            <Button 
+                                variant='contained' 
+                                onClick={handleCloseModal} 
+                                sx={{
+                                    width:'100px',
+                                    borderRadius: '5px',
+                                    backgroundColor: 'gray',
+                                    '&:hover': {
+                                        backgroundColor: 'gray',
+                                    },
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                            <Button 
+                                variant='contained' 
+                                onClick={(e) => handleConfirmPayment(e)}
+                                sx={{
+                                    width:'100px',
+                                    borderRadius: '5px'
+                                }}
+                            >
+                                Confirm
+                            </Button>
+                        </Stack>
+                    </Box>
+                </StyledModal>
+                
+                <StyledModal>
                     <Modal 
                         open={paymentConfirmed} 
                         onClose={handlePaymentSuccessModalClose} 
-                        BackdropComponent={Backdrop} 
+                        BackdropComponent={GrayBackdrop} 
                         BackdropProps={{ onClick: handleBackdropClick }}
                     >
-                        <Box className='successContent'>
-                            <div className='success'>
-                                <img src={successPaymentIcon} alt="Success Payment Icon" className='successIcon'/>
-                            </div>
-                            <Typography variant='h5' sx={{ fontWeight: 'bold', mt: 2, mb:2 }}>Payment Successful</Typography>
+                        <Box 
+                            sx={{
+                            width: '400px', 
+                            backgroundColor: 'white', 
+                            borderRadius: '10px', 
+                            padding: '10px', 
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center', 
+                            }}
+                        >
+                            <img src={successPaymentIcon} alt="Success Payment Icon" style={{ width: '150px', height: '150px' }} />
+                            <Typography variant="h6" sx={{ mt: "5px", mb: "15px", fontWeight: 'bold' }}>PAYMENT SUCCESSFUL</Typography>
                             <Typography>Your payment has been successfully processed.</Typography>
                             <Typography>Please check your email for your reservation details.</Typography>
                             <Button 
@@ -535,9 +561,9 @@ export default function Details() {
                                 Done
                             </Button>
                         </Box>
-                    </Modal>    
-                </div>
-            </div>
-        </div>
+                    </Modal>
+                </StyledModal>  
+            </Box>
+        </Box>
     )
 }
