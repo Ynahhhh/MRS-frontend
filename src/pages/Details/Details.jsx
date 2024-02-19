@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Backdrop, Box, Button, Grid, IconButton, Modal, Paper, 
+import { Backdrop, Box, Button, Divider, Grid, IconButton, Modal, Paper, 
     Stack, Table, TableBody, TableCell, TableContainer, TableHead, 
     TableRow, TextField, Typography, styled } from '@mui/material';
 import confirmPaymentIcon from '../../assets/secure-payment.png';
@@ -41,9 +41,7 @@ export default function Details() {
     const [lastName, setLastName] = useState('');
     const [paymentConfirmed, setPaymentConfirmed] = useState(false);
     const [seniorCount, setSeniorCount] = useState(0);
-    const [movieDetails, setMovieDetails] = useState(null);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [airingTime, setAiringTime] = useState(null);
 
     // Get the dynamic part of the URL
     const movieId = window.location.pathname.split('/')[2];
@@ -71,7 +69,7 @@ export default function Details() {
             res_id: currentDateTime,
             seat: decodedSelectedSeats,
             amt_pay: totalPrice,
-            isCancel: false,
+            is_cancel: false,
             m_id: movie._id,
             a_id: airing._id
         };
@@ -87,44 +85,44 @@ export default function Details() {
     
             if (!response.ok) {
                 throw new Error('Failed to submit data');
-            } else {
-                // Make another request if the first one is successful
-                const occupancyFormData = {
-                    is_occupied: true
-                };
-                try {
-                    console.log(airing._id);
-                    for (const position of decodedSelectedSeats) {
-                        const response = await fetch(`http://localhost:5555/api/details/${airing._id}/${position}`, {
-                            method: 'PATCH',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(occupancyFormData)
-                        });
-    
-                        if (!response.ok) {
-                            throw new Error('Failed to submit data');
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error submitting occupancy data:', error);
-                }
-    
-                // Reset form fields
-                setFirstName('');
-                setMiddleName('');
-                setLastName('');
-                decodedSelectedSeats = [];
-                setMovieDetails(null);
-                setPaymentConfirmed(false);
-    
-                // Proceed to success modal
-                setOpenModal(false);
             }
         } catch (error) {
             console.error('Error submitting data:', error);
         }
+        setOpenModal(false);
+        setPaymentConfirmed(true);
+    };
+    const handlePaymentSuccessModalClose = async () => {
+        const seatOccupancy = {
+            is_occupied: true // Set is_occupied to true to indicate the seat is already occupied
+        };
+    
+        try {
+            // Iterate over each position in decodedSelectedSeats array
+            for (const position of decodedSelectedSeats) {
+                // Send a PATCH request to update the position with is_occupied: false
+                const response = await fetch(`http://localhost:5555/api/details/${airing._id}/${position}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(seatOccupancy)
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Failed to update seat occupancy');
+                }
+            }
+        } catch (error) {
+            console.error('Error updating seat occupancy:', error);
+        }
+    
+        // Reset form fields and state variables
+        setFirstName('');
+        setMiddleName('');
+        setLastName('');
+        decodedSelectedSeats = [];
+        setPaymentConfirmed(false);
     };
     
 
@@ -146,31 +144,6 @@ export default function Details() {
             setSeniorCount(prevCount => prevCount - 1);
         }
     };
-
-    useEffect(() => {
-        const fetchSeatDetails = async () => {
-            try {
-                // Ensure movieId exists before fetching seat details
-                if (!airingId) {
-                    return;
-                }
-    
-                const response = await fetch(`http://localhost:5555/api/airing/${airingId}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch seat details');
-                }
-                const seatData = await response.json();
-                console.log(seatData);
-    
-            } catch (error) {
-                console.error('Error fetching seat details:', error);
-            }
-        };
-    
-        if (airingId && airingTime) {
-            fetchSeatDetails();
-        }
-    }, [airingId, airingTime, seniorCount]);
  
     useEffect(() => {
         const calculateTotalPrice = () => {
@@ -268,7 +241,7 @@ export default function Details() {
     
         // Get the current date
         const year = currentDate.getFullYear(); // Full year (e.g., 2024)
-        const month = currentDate.getMonth() + 1; // Month (0-11), adding 1 to make it 1-12
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Month with leading zeros (01-12)
         const day = currentDate.getDate(); // Day of the month (1-31)
     
         // Get the current time
@@ -281,27 +254,25 @@ export default function Details() {
     
         return currentDateTime;
     }
-    
-    // Call the function to get the current date and time
     const currentDateTime = getCurrentDateTime();
-    // console.log("Current Date and Time:", currentDateTime);
     const MAX_ROWS_BEFORE_SCROLL = 5; // Maximum number of rows before enabling scroll
     const regular = (decodedSelectedSeats.length - seniorCount) * (airing ? airing.a_price : 0);
     const discount = (airing && airing.a_type.toUpperCase() === 'REGULAR' && seniorCount > 0) ? (airing.a_price * 0.8 * seniorCount) : 0;
 
     return (
-        <Box padding={0.1}>
+        <Box padding="20px">
             <Grid container spacing={2}>
                 {/* First column */}
                 <Grid item xs={6}>
                     <Grid container spacing={2}>
                         {/* First row */}
                         <Grid item xs={12}>
-                            <Box sx={{ bgcolor: 'grey.300', height: 352 }} > 
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Box sx={{ bgcolor: '#EEF5FF', height: '375px', boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.25)', padding: '10px' }} > 
+                                <Box textAlign="left" sx={{ display: 'flex', alignItems: 'center' }}>
                                     <Typography variant="h6" ml={1} fontWeight='bold'>RESERVATION DESCRIPTION</Typography>
-                                    <Typography mt={0.5} ml={18} mr={1} sx={{ fontSize: 15 }}>RESERVATION ID: {currentDateTime}</Typography>
+                                    <Typography mt={0.5} ml={18} mr={1} sx={{ fontSize: '15px' }}>RESERVATION ID: {currentDateTime}</Typography>
                                 </Box>
+                                <Divider sx={{ bgcolor: '#40A2E3', mt: 0.3, mb: 0.5, height: '2.5px' }} />
                                 <Box>
                                     <Typography ml={1} variant="h7">CUSTOMER DESCRIPTION</Typography>
                                 </Box>
@@ -316,14 +287,12 @@ export default function Details() {
                                     autoComplete="off"
                                 >
                                     <TextField
-                                        id="fname" 
                                         label="First Name" 
                                         value={firstName}
                                         onChange={(e) => setFirstName(e.target.value)}
                                         size="small" 
                                     />
                                     <TextField
-                                        id="mname" 
                                         label="Middle Name" 
                                         variant="outlined"
                                         value={middleName}
@@ -331,7 +300,6 @@ export default function Details() {
                                         size="small"
                                     />
                                     <TextField 
-                                        id="lname" 
                                         label="Last Name" 
                                         variant="outlined" 
                                         value={lastName}
@@ -362,77 +330,78 @@ export default function Details() {
                                 {movie && airing && (
                                     <Box>
                                         <Box>
-                                            <Typography  variant="h7">MOVIE DESCRIPTION</Typography>
+                                            <Typography ml={1} variant="h7">MOVIE DESCRIPTION</Typography>
                                         </Box>
-                                        <Grid container spacing={2} ml={2} mt={0.02}>
-                                            <Grid item xs={4}>
-                                                <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Movie Title: {movie.m_title}</Typography>
+                                        <Box alignContent="center">
+                                            <Grid container spacing={2} ml={2} mt={0.02}>
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Movie Title: {movie.m_title}</Typography>
+                                                </Grid>
+                                                <Grid item xs={4}></Grid>
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Type: {airing.a_type.toUpperCase()}</Typography>
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Date: {airing.a_date}</Typography>
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Start Time: {airing.a_starttime}</Typography>
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>End Time: {airing.a_endtime}</Typography>
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Duration: {movie.m_hrs} hrs</Typography>
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Price: PHP {airing.a_price.toFixed(2)}</Typography>
+                                                </Grid>
+                                                <Grid item xs={4}></Grid>
+                                                <Grid item xs={4}>
+                                                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>MPA FILM RATING: {movie.m_mpa}</Typography>
+                                                </Grid>
                                             </Grid>
-                                            <Grid item xs={4}></Grid>
-                                            <Grid item xs={4}>
-                                                <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Type: {airing.a_type.toUpperCase()}</Typography>
-                                            </Grid>
-                                            <Grid item xs={4}>
-                                                <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Date: {airing.a_date}</Typography>
-                                            </Grid>
-                                            <Grid item xs={4}>
-                                                <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Start Time: {airing.a_starttime}</Typography>
-                                            </Grid>
-                                            <Grid item xs={4}>
-                                                <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>End Time: {airing.a_endtime}</Typography>
-                                            </Grid>
-                                            <Grid item xs={4}>
-                                                <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Duration: {movie.m_hrs} hrs</Typography>
-                                            </Grid>
-                                            <Grid item xs={4}>
-                                                <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Price: PHP {airing.a_price.toFixed(2)}</Typography>
-                                            </Grid>
-                                            <Grid item xs={4}></Grid>
-                                            <Grid item xs={4}>
-                                                <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>MPA FILM RATING: {movie.m_mpa}</Typography>
-                                            </Grid>
-                                        </Grid>
+                                        </Box>
                                     </Box>
                                 )}
                             </Box>
                         </Grid>
                         {/* Second row */}
                         <Grid item xs={12}>
-                            <Box sx={{ bgcolor: 'grey.300', height: 315 }} > 
+                            <Box sx={{ bgcolor: '#EEF5FF', height: '293px', boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.25)', padding: '10px' }} > 
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                     <Typography  variant="h6" ml={1} fontWeight='bold'>PAYMENT BREAKDOWN</Typography>
                                 </Box>
-                                {/* {movieDetails && ( */}
-                                    <Box sx={{ marginLeft: '13px', marginTop: '10px' }}>
-                                        <TableContainer component={Paper} sx={{ width: '98%' }}>
-                                            <Table size="small" aria-label="a dense table">
-                                                <TableBody sx={{ backgroundColor: '#f0f0f0' }}>
-                                                    <TableRow>
-                                                        <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Type: </Typography></TableCell>
-                                                        <TableCell align="right"></TableCell>
-                                                    </TableRow>
-                                                    <TableRow>
-                                                        <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Number of Seats: </Typography></TableCell>
-                                                        <TableCell align="right">{decodedSelectedSeats.length}</TableCell>
-                                                    </TableRow>
-                                                    <TableRow>
-                                                        <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Discounted Seats: [{seniorCount}]</Typography></TableCell>
-                                                        <TableCell align="right">PHP {discount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                    </TableRow>
-                                                    <TableRow>
-                                                        <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Regular Seats: [{decodedSelectedSeats.length - seniorCount}]</Typography></TableCell>
-                                                        <TableCell align="right">PHP {regular.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                    </TableRow>
-                                                    <TableRow>
-                                                        <TableCell></TableCell>
-                                                        <TableCell align='right'><Typography fontWeight='bold' fontSize='small'>TOTAL AMOUNT TO PAY: PHP {totalPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography></TableCell>
-                                                    </TableRow>
-                                                </TableBody>
-                                            </Table>
-                                        </TableContainer>
-                                    </Box>
-                                {/* )} */}
-                                <Stack spacing={10} direction="row" marginTop={6} marginLeft={59.5}>
+                                <Divider sx={{ bgcolor: '#40A2E3', mt: 0.3, mb: 0.5, height: '2.5px' }} />
+                                <Box sx={{ marginLeft: '13px', marginTop: '10px' }}>
+                                    <TableContainer component={Paper} sx={{ width: '98%' }}>
+                                        <Table size="small" aria-label="a dense table">
+                                            <TableBody sx={{ backgroundColor: '#EEF5FF' }}>
+                                                <TableRow>
+                                                    <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Type: </Typography></TableCell>
+                                                    <TableCell align="right"></TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Number of Seats: </Typography></TableCell>
+                                                    <TableCell align="right">{decodedSelectedSeats.length}</TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Discounted Seats: [{seniorCount}]</Typography></TableCell>
+                                                    <TableCell align="right">PHP {discount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Regular Seats: [{decodedSelectedSeats.length - seniorCount}]</Typography></TableCell>
+                                                    <TableCell align="right">PHP {regular.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell></TableCell>
+                                                    <TableCell align='right'><Typography fontWeight='bold' fontSize='small'>TOTAL AMOUNT TO PAY: PHP {totalPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Typography></TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </Box>
+                                <Stack spacing={10} direction="row" marginTop={2.5} marginLeft={59.5}>
                                     <Button 
                                         variant="contained" 
                                         onClick={handleOpenModal}
@@ -447,7 +416,7 @@ export default function Details() {
                                 {/* Payment modal */}
                                 <StyledModal
                                     open={openModal}
-                                    onClose={handleCloseModal}
+                                    // onClose={handleCloseModal}
                                     BackdropComponent={GrayBackdrop}
                                     BackdropProps={{ onClick: handleBackdropClick }}
                                 >
@@ -486,7 +455,7 @@ export default function Details() {
                                             </Button>
                                             <Button 
                                                 variant='contained' 
-                                                onClick={(e) => handleConfirmPayment(e)}
+                                                onClick={handleConfirmPayment}
                                                 sx={{
                                                     width:'100px',
                                                     borderRadius: '5px'
@@ -498,46 +467,44 @@ export default function Details() {
                                     </Box>
                                 </StyledModal>
                                 
-                                <StyledModal>
-                                    <Modal 
+                                <StyledModal
                                         open={paymentConfirmed} 
                                         // onClose={handlePaymentSuccessModalClose} 
                                         BackdropComponent={GrayBackdrop} 
                                         BackdropProps={{ onClick: handleBackdropClick }}
+                                >
+                                    <Box 
+                                        sx={{
+                                        width: '450px', 
+                                        backgroundColor: 'white', 
+                                        borderRadius: '10px', 
+                                        padding: '10px', 
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center', 
+                                        }}
                                     >
-                                        <Box 
+                                        <img src={successPaymentIcon} alt="Success Payment Icon" style={{ width: '150px', height: '150px', alignItems: 'center', justifyContent: 'center' }} />   
+                                        <Typography variant="h6" sx={{ mt: "15px", mb: "15px", fontWeight: 'bold' }}>PAYMENT SUCCESSFUL</Typography>
+                                        <Typography>Your payment has been successfully processed.</Typography>
+                                        <Typography>Please check your email for your reservation details.</Typography>
+                                        <Button 
+                                            as={Link}
+                                            to={`/movies/${movieId}`}
+                                            variant='contained'
+                                            onClick={handlePaymentSuccessModalClose}
                                             sx={{
-                                            width: '400px', 
-                                            backgroundColor: 'white', 
-                                            borderRadius: '10px', 
-                                            padding: '10px', 
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'center', 
+                                                width:'100px',
+                                                marginTop: '25px',
+                                                //marginBottom: '50px',
+                                                borderRadius: '5px',
+                                                textDecoration:'none',
+                                                textAlign: 'center'
                                             }}
                                         >
-                                            <img src={successPaymentIcon} alt="Success Payment Icon" style={{ width: '150px', height: '150px' }} />
-                                            <Typography variant="h6" sx={{ mt: "5px", mb: "15px", fontWeight: 'bold' }}>PAYMENT SUCCESSFUL</Typography>
-                                            <Typography>Your payment has been successfully processed.</Typography>
-                                            <Typography>Please check your email for your reservation details.</Typography>
-                                            <Button 
-                                                as={Link}
-                                                to="/"
-                                                variant='contained'
-                                                // onClick={handlePaymentSuccessModalClose} 
-                                                className='doneBtn'
-                                                sx={{
-                                                    width:'100px',
-                                                    marginTop: '15px',
-                                                    marginBottom: '50px',
-                                                    borderRadius: '5px',
-                                                    textDecoration:'none'
-                                                }}
-                                            >
-                                                Done
-                                            </Button>
-                                        </Box>
-                                    </Modal>
+                                            Done
+                                        </Button>
+                                    </Box>
                                 </StyledModal>  
                             </Box>
                         </Grid>
@@ -545,13 +512,14 @@ export default function Details() {
                 </Grid>
 
                 {/* Second column */}
-                <Grid item xs={6}>
-                    <Box sx={{ bgcolor: 'grey.300', height: '682px' }} > 
+                <Grid item xs={6} height='100vh'>
+                    <Box sx={{ bgcolor: '#EEF5FF', height: '682.5px', boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.25)', padding: '10px' }} > 
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Typography  variant="h6" ml={1} fontWeight='bold'>SEAT RESERVED</Typography>
                             <Typography mt={0.5} ml={31.5} mr={1}>Total Number of Seats Reserved: {decodedSelectedSeats.length}</Typography>
                         </Box>
-                        <Box sx={{ alignItems: 'center', justifyContent: 'center', marginTop: '10px', marginLeft: '15px' }}>
+                        <Divider sx={{ bgcolor: '#40A2E3', mt: 0.3, mb: 0.5, height: '2.5px' }} />
+                        <Box sx={{ alignItems: 'center', justifyContent: 'center', marginTop: '15px', marginLeft: '15px' }}>
                             <TableContainer component={Paper} sx={{ width: '98%', maxHeight: MAX_ROWS_BEFORE_SCROLL * 102 + 20, overflowY: 'auto'  }}>
                                 <Table size="small" aria-label="a dense table">
                                     <TableHead sx={{ backgroundColor: '#BBE2EC', position: 'sticky', top: 0, zIndex: 1000 }}>
@@ -560,14 +528,11 @@ export default function Details() {
                                             <TableCell align="center"><Typography fontWeight='bold' fontSize='small'>PRICE</Typography></TableCell>
                                         </TableRow>
                                     </TableHead>
-                                    <TableBody sx={{ backgroundColor: '#f0f0f0' }}>
+                                    <TableBody sx={{ backgroundColor: '#EEF5FF' }}>
                                         {decodedSelectedSeats.map((seat, index) => (
                                             <TableRow key={index}>
                                                 <TableCell align='center'>{seat}</TableCell>
                                                 <TableCell align='center'> PHP {airing ? airing.a_price.toFixed(2) : '-'}</TableCell>
-                                                {/* {movieDetails ? movieDetails.m_price.toFixed(2) : '-'} */}
-                                                {/* <TableCell>{seat}</TableCell> */}
-                                                {/* Display more properties of the seat if available*/ }
                                             </TableRow>
                                         ))}
                                     </TableBody>
