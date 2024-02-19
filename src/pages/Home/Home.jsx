@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import MovieItem from './MovieItem';
 
 const StyledPaper = styled(Paper)({
-  maxHeight: 550,
+  maxHeight: 570,
   overflow: 'auto',
   backgroundColor: 'transparent',
   boxShadow: 'none',

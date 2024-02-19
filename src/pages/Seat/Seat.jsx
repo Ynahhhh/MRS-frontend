@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Divider, MenuItem, Select, Typography } from '@mui/material';
+import { Box, Button, Divider, MenuItem, Paper, Select, Typography } from '@mui/material';
 import styled from '@emotion/styled';
 import AiringTimeDetails from './AiringTimeDetails';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Link } from 'react-router-dom';
 
 const SeatBox = styled(Box)({
     display:'flex',
@@ -23,7 +25,20 @@ function Seat() {
     const [airingTimes, setAiringTimes] = useState([]);
     const [selectedTime, setSelectedTime] = useState(null);
     const [selectedSeats, setSelectedSeats] = useState([]); // State to hold selected seats
-
+    
+    const StyledPaper = styled(Paper)({
+        maxHeight: 640,
+        overflow: 'auto',
+        backgroundColor: 'transparent',
+        boxShadow: 'none',
+        '&::-webkit-scrollbar': {
+          width: '0.4rem'
+        },
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: '#ccc',
+          borderRadius: '4px'
+        }
+      });
     // timeslot
 
     useEffect(() => {
@@ -102,8 +117,9 @@ function Seat() {
 
     return (
         <SeatBox className="seat-cont" styled={{display: "flex", justifyContent: "space-between"}} >
+            
             <Box className="movie-details" style={{width: "25%", alignItems:"center", textAlign: "center",paddingLeft:'20px', marginTop: '20px' }}>
-                
+            <StyledPaper>
                 <Box className="movie-image" style={{ width: '100%' }}>
                     <Box className="movie-image" >
                         <img src={`/${movie.m_poster}`}  alt={movie.m_poster} style={{ width: '300px', height: '400px' }} />                           
@@ -126,8 +142,9 @@ function Seat() {
                             <Typography> {movie.m_hrs} hrs</Typography>
                         </MoreDetails>
                     </Box>
-                    
+                    </StyledPaper>   
             </Box>
+            
             <Box className="chair-details" style={{ width: "45%", marginTop: '20px', padding: '20px 15px', background: '#fff', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' , height: '85vh', padding: '20px' }}>
             {/* {selectedTime && (
             <Typography variant='h6' style={{alignContent:"center", textAlign:"center", margingTop:"30px", fontWeight:"600" }}>
@@ -146,6 +163,21 @@ function Seat() {
 
             </Box>
             <Box className="seat-tab" style={{width: "25%", padding: '30px'}}>
+                <StyledPaper>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom:'20px' }}>
+                <Button
+                    variant="text"
+                    size="medium"
+                    color="inherit"
+                    component={Link}
+                    to="/"
+                >
+                    <ArrowBackIcon/>
+                    Go Back
+                </Button>
+                </div>
+
+
                 {/* SELECT DATE */}
                 <Typography variant='h6' style={{alignContent:"center", textAlign:"center", margingTop:"30px", fontWeight:"600" }}>TIME SLOT SECTION</Typography>
                 <Select
@@ -201,7 +233,9 @@ function Seat() {
                         );
                     })}
                 </Box>
+                </StyledPaper>
             </Box>
+            
         </SeatBox>
     );
 }
