@@ -146,11 +146,7 @@ function Seat() {
             </Box>
             
             <Box className="chair-details" style={{ width: "45%", marginTop: '20px', padding: '20px 15px', background: '#fff', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' , height: '85vh', padding: '20px' }}>
-            {/* {selectedTime && (
-            <Typography variant='h6' style={{alignContent:"center", textAlign:"center", margingTop:"30px", fontWeight:"600" }}>
-                {`SEAT LAYOUT (${formatTime(selectedTime.a_starttime)} - ${formatTime(selectedTime.a_endtime)} )`}
-            </Typography>
-            )} */}
+           
             {selectedTime === null && (
                 <Typography style={{alignContent:"center", textAlign:"center", marginTop: "250px"}}> 
                     Display Seat Layout
@@ -210,6 +206,11 @@ function Seat() {
                 </Select>
                 {/* SELECT TIME SLOT */}
                 <Box style={{ marginTop: '25px'}}>
+                {selectedTime && (
+                <Typography variant='body1' style={{marginBottom: '10px',alignContent:"center", textAlign:"center", margingTop:"30px", fontWeight:"600" }}>
+                    {`Time: (${formatTime(selectedTime.a_starttime)} - ${formatTime(selectedTime.a_endtime)} )`}
+                </Typography>
+                )}
                 {selectedDate === "" && (
                     <Typography style={{marginTop:'-20px', textAlign:"center"}} variant='body2'>
                         Select date to display time slot {selectedDate}
