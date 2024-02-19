@@ -4,6 +4,7 @@ import Home from './pages/Home/Home';
 import Layout from './main_components/Layout';
 import Seat from './pages/Seat/Seat';
 import Details from './pages/Details/Details';
+import Reservation from './pages/Reservation/Reservation';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route index element={<Home/>} />
         <Route path="movies/:id" element={<Seat/>} />
         <Route path="details/:movie_id/:a_id/:seatArray" element={<Details />} />
+        <Route path="reserve/" element={<Reservation/>} />
 
         </Route>
       </Routes>

@@ -142,6 +142,7 @@ const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
 
             </Box>
             <Box>
+            {selectedSeats.length > 0 && (
                 <Button
                     variant="outlined"  
                     component={Link} 
@@ -150,6 +151,8 @@ const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
                 >
                     Proceed to Reservation
                 </Button>
+            )}
+
             </Box>
             
             
