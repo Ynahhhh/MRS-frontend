@@ -10,7 +10,18 @@ const MoreDetails = styled(Box)({
     marginTop: '5px',
     justifyContent: 'space-between'
 });
+const LegendBox = styled(Box)({
+    height: '10px',
+    width: '10px',
+    padding: '5px',
+    marginRight: '10px',
+    marginTop:'5px'
+});
 
+const Legend = styled(Box)({
+    display: 'flex',
+    marginTop: '5px'
+});
 const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
     const [selectedSeats, setSelectedSeats] = useState([]);
     console.log(selectedSeats);
@@ -58,7 +69,7 @@ const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
                         onClick={() => handleSeatClick(seat)}
                         disabled={seat.is_occupied}
                         variant={isSeatSelected ? "contained" : "outlined"}
-                        style={{ color: seat.is_occupied ? '#f57c00' : (isSeatSelected ? '#0288d1' : '#388e3c'), padding:"-2px" }}
+                        style={{ color: seat.is_occupied ? '#f57c00' : (isSeatSelected ? '#fff' : '#000'), padding:"-2px" }}
                     >
                         {seat.position}
                        
@@ -78,22 +89,58 @@ const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
 
     return (
         <Box >
-            <Box style={{marginTop: '10px', marginLeft: '500px'}}>
-            {selectedSeats.length === 0 ? (
-                <Button onClick={handleSelectAllClick}>Select All</Button>
-            ) : (
-                <Button onClick={handleUnselectAllClick}>Unselect All</Button>
-            )}
+            <Box style={{display:"flex", justifyContent:"space-between"}}>
+                <Typography variant='h6' style={{paddingLeft:'10px',marginBottom: '10px' }}><b>SEAT LAYOUT</b></Typography>
+                <Box>
+                    {selectedSeats.length === 0 ? (
+                        <Button onClick={handleSelectAllClick}>Select All</Button>
+                    ) : (
+                        <Button onClick={handleUnselectAllClick}>Unselect All</Button>
+                    )}
+                </Box>
             </Box>
+            
             <Box style={{ marginTop: '10px' , alignItems:"center", textAlign:"center", padding: "0px 50px"}}>
                 <Typography style={{ display: 'flex', flexDirection: 'column' }}>
                     
                     {renderSeatGrid()}
                 </Typography>
             </Box>
-            <Button onClick={handleSelectAllClick}>Select All</Button>
-            <Button onClick={handleUnselectAllClick}>Unselect All</Button>
+                
+            <Box style={{display:"flex", justifyContent:"space-between", maginTop: '30px'}}>
+                <Box style={{width:'50%', padding: '0 20px'}}>
+                    <Typography><b>MORE DETAILS</b></Typography>
+                    <MoreDetails> 
+                        <Typography variant='caption'><b>PRICE: </b></Typography>
+                        <Typography variant='caption'> {a_price}</Typography>
+                    </MoreDetails>
+                    <MoreDetails> 
+                        <Typography variant='caption'><b>TYPE: </b></Typography>
+                        <Typography variant='caption'> {a_type}</Typography>
+                    </MoreDetails>
+                    <MoreDetails> 
+                        <Typography variant='caption'><b>CINEMA: </b></Typography>
+                        <Typography variant='caption'> {a_cinema}</Typography>
+                    </MoreDetails>
+                </Box>
+                <Box style={{width:'50%', padding: '0 20px'}}>
+                    <Typography><b>LEGEND</b></Typography>
+                    <Legend >
+                        <LegendBox style={{background:'#388e3c'}}></LegendBox>
+                        <Typography variant='caption'>Available Seats</Typography>
+                    </Legend>
+                    <Legend >
+                        <LegendBox style={{background:'#f57c00'}}></LegendBox>
+                        <Typography variant='caption'>Unavailable Seats </Typography>
+                    </Legend>
+                    <Legend >
+                        <LegendBox style={{background:'#0288d1'}}></LegendBox>
+                        <Typography variant='caption'>Selected Seats </Typography>
+                    </Legend>
+                </Box>
+                    
 
+            </Box>
             <Box>
                 <Button
                     variant="outlined"  
@@ -103,22 +150,6 @@ const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
                 >
                     Proceed to Reservation
                 </Button>
-            </Box>
-                
-            <Box style={{display:"flex", justifyContent:"space-between" ,padding: "10px 40px"}}>
-                    <MoreDetails> 
-                        <Typography><b>PRICE: </b></Typography>
-                        <Typography> {a_price}</Typography>
-                    </MoreDetails>
-                    <MoreDetails> 
-                        <Typography><b>TYPE: </b></Typography>
-                        <Typography> {a_type}</Typography>
-                    </MoreDetails>
-                    <MoreDetails> 
-                        <Typography><b>CINEMA: </b></Typography>
-                        <Typography> {a_cinema}</Typography>
-                    </MoreDetails>
-
             </Box>
             
             

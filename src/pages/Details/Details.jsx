@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useLocation } from 'react-router-dom';
-import './Details.css';
+// import './Details.css';
 import { Backdrop, Box, Button, Grid, IconButton, Modal, Paper, 
     Stack, Table, TableBody, TableCell, TableContainer, TableHead, 
     TableRow, TextField, Typography } from '@mui/material';
