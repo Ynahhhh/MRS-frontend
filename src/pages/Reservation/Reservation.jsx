@@ -46,10 +46,10 @@ export default function Reservation() {
                 });
                 // MAP ALL THE RESERVE SEATS AND UPDATE 
                 try {
-                    const formData = { is_occupied: false };
-                    // console.log(item._id);
+                    const formData = { is_occupied: true };
+                    console.log(item.a_id);
                     for (const seat of item.seat) {
-                        const response = await fetch(`http://localhost:5555/api/reserve/cancel/${item._id}/${seat}`, {
+                        const response = await fetch(`http://localhost:5555/api/reserve/cancel/${item.a_id}/${seat}`, {
                             
                             method: 'PATCH',
                             headers: {

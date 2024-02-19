@@ -24,8 +24,14 @@ export default function Details() {
     const [airing, setAiring] = useState(null);
     const [movie, setMovie] = useState(null);
 
-    // console.log(airing._id);
+    // console.log(airing);
     // console.log(movie);
+    // Check if airing is not null before accessing its _id property
+    if (airing && airing._id) {
+        console.log("shit", airing._id);
+    } else {
+        console.log('Airing is null or _id is not available');
+    }
 
 
     // ******************************
@@ -81,48 +87,47 @@ export default function Details() {
     
             if (!response.ok) {
                 throw new Error('Failed to submit data');
-            }
-            // Proceed to success modal
-            setOpenModal(true);
-        } catch (error) {
-            console.error('Error submitting data:', error);
-        }
-        setPaymentConfirmed(true);
-        setOpenModal(false); // Close the payment modal
-        
-    };
-    const handlePaymentSuccessModalClose = () => {
-        const formData = {
-            is_occupied: true
-        };
-        try {
-            decodedSelectedSeats.map(async (seat) => {
-                const response = await fetch(`http://localhost:5555/api/movies/${movieId}/${seat}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-        
-                if (!response.ok) {
-                    throw new Error('Failed to submit data');
+            } else {
+                // Make another request if the first one is successful
+                const occupancyFormData = {
+                    is_occupied: true
+                };
+                try {
+                    console.log(airing._id);
+                    for (const position of decodedSelectedSeats) {
+                        const response = await fetch(`http://localhost:5555/api/details/${airing._id}/${position}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(occupancyFormData)
+                        });
+    
+                        if (!response.ok) {
+                            throw new Error('Failed to submit data');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error submitting occupancy data:', error);
                 }
-            });
+    
+                // Reset form fields
+                setFirstName('');
+                setMiddleName('');
+                setLastName('');
+                decodedSelectedSeats = [];
+                setMovieDetails(null);
+                setPaymentConfirmed(false);
+    
+                // Proceed to success modal
+                setOpenModal(true);
+            }
         } catch (error) {
             console.error('Error submitting data:', error);
         }
-
-        // Reset form fields
-        setFirstName('');
-        setMiddleName('');
-        setLastName('');
-        decodedSelectedSeats=[];
-        setMovieDetails(null);
-        //setTotalPrice(0);
-        //setSelectedSeats([]);
-        setPaymentConfirmed(false);
     };
+    
+
     const handleUpdateSeats = () => {
         emptySelectedSeats();
     };
@@ -141,64 +146,6 @@ export default function Details() {
             setSeniorCount(prevCount => prevCount - 1);
         }
     };
-
-    useEffect(() => {
-        const fetchMovieDetails = async () => {
-            try {
-                const response = await fetch(`http://localhost:5555/api/movies/${movieId}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch movie details');
-                }
-                const data = await response.json();
-                // // Extracting the date part
-                // if (data && data.m_date) {
-                //     data.m_date = data.m_date.substring(0, 10); // or data.m_date.split('T')[0];
-                // }
-                // // Extracting the time part from m_starttime
-                // if (data && data.m_starttime) {
-                //     data.m_starttime = data.m_starttime.substring(11, 16); // or data.m_starttime.split('T')[1].substring(0, 5);
-                // }
-
-                // // Extracting the time part from m_endtime
-                // if (data && data.m_endtime) {
-                //     data.m_endtime = data.m_endtime.substring(11, 16); // or data.m_endtime.split('T')[1].substring(0, 5);
-                // }
-                // // Calculate duration in hours and minutes
-                // const startTime = new Date(`2000-01-01T${data.m_starttime}:00`);
-                // const endTime = new Date(`2000-01-01T${data.m_endtime}:00`);
-                // const durationMinutes = Math.round((endTime - startTime) / (1000 * 60)); // Time difference in minutes
-
-                // const hours = Math.floor(durationMinutes / 60);
-                // const minutes = durationMinutes % 60;
-
-                // data.duration = { hours, minutes };
-
-                setMovieDetails(data);
-            } catch (error) {
-                console.error('Error fetching movie details:', error);
-            }
-        };
-
-        fetchMovieDetails();
-    }, [movieId]);
-
-    // useEffect(() => {
-    //     const fetchAiringTimeDetails = async () => {
-    //         try {
-    //             const response = await fetch(`http://localhost:5555/api/airing/${airingId}`);
-    //             if (!response.ok) {
-    //                 throw new Error('Failed to fetch airing time details');
-    //             }
-    //             const airingTimeData = await response.json();
-    //             // Here, you can update your component state with the fetched airing time details
-    //             setAiringTime(airingTimeData);
-    //         } catch (error) {
-    //             console.error('Error fetching airing time details:', error);
-    //         }
-    //     };
-    
-    //     fetchAiringTimeDetails();
-    // }, [airingId]);
 
     useEffect(() => {
         const fetchSeatDetails = async () => {
@@ -281,9 +228,11 @@ export default function Details() {
 
                 const hours = Math.floor(durationMinutes / 60);
                 const minutes = durationMinutes % 60;
+                const id = data._id;
 
                 data.duration = { hours, minutes };
             setAiring(data);
+            console.log(id)
         } catch (error) {
             console.error('Error fetching movie:', error);
         }
@@ -436,11 +385,11 @@ export default function Details() {
                                                 <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Duration: {movie.m_hrs} hrs</Typography>
                                             </Grid>
                                             <Grid item xs={4}>
-                                                <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Price: PHP {airing.a_price}</Typography>
+                                                <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Price: PHP {airing.a_price.toFixed(2)}</Typography>
                                             </Grid>
                                             <Grid item xs={4}></Grid>
                                             <Grid item xs={4}>
-                                                <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>MPA FILM RATING: {movieDetails.m_mpa}</Typography>
+                                                <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>MPA FILM RATING: {movie.m_mpa}</Typography>
                                             </Grid>
                                         </Grid>
                                     </Box>
@@ -553,7 +502,7 @@ export default function Details() {
                                 <StyledModal>
                                     <Modal 
                                         open={paymentConfirmed} 
-                                        onClose={handlePaymentSuccessModalClose} 
+                                        // onClose={handlePaymentSuccessModalClose} 
                                         BackdropComponent={GrayBackdrop} 
                                         BackdropProps={{ onClick: handleBackdropClick }}
                                     >
@@ -576,7 +525,7 @@ export default function Details() {
                                                 as={Link}
                                                 to="/"
                                                 variant='contained'
-                                                onClick={handlePaymentSuccessModalClose} 
+                                                // onClick={handlePaymentSuccessModalClose} 
                                                 className='doneBtn'
                                                 sx={{
                                                     width:'100px',

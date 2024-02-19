@@ -116,7 +116,7 @@ const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
                     </MoreDetails>
                     <MoreDetails> 
                         <Typography variant='caption'><b>TYPE: </b></Typography>
-                        <Typography variant='caption'> {a_type}</Typography>
+                        <Typography variant='caption'> {a_type.toUpperCase()}</Typography>
                     </MoreDetails>
                     <MoreDetails> 
                         <Typography variant='caption'><b>CINEMA: </b></Typography>
