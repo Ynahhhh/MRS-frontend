@@ -380,7 +380,7 @@ export default function Details() {
                     <Typography mt={0.5} ml={30} mr={1}>Total Number of Seats Reserved: {decodedSelectedSeats.length}</Typography>
                 </Box>
                 <Box sx={{ alignItems: 'center', justifyContent: 'center', marginTop: '10px', marginLeft: '15px' }}>
-                    <TableContainer component={Paper} sx={{ width: '98%', maxHeight: MAX_ROWS_BEFORE_SCROLL * 40 + 20, overflowY: 'auto'  }}>
+                    <TableContainer component={Paper} sx={{ width: '98%', maxHeight: MAX_ROWS_BEFORE_SCROLL * 45 + 25, overflowY: 'auto'  }}>
                         <Table size="small" aria-label="a dense table">
                             <TableHead sx={{ backgroundColor: '#BBE2EC', position: 'sticky', top: 0, zIndex: 1000 }}>
                                 <TableRow>

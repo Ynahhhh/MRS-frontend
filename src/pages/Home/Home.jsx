@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
+import { Box, Paper, TextField, Typography } from "@mui/material";
 import styled from '@emotion/styled';
 import MovieItem from './MovieItem';
 
@@ -43,15 +43,11 @@ const Home = () => {
     setSelectedDate(event.target.value);
   };
 
-  const handleSelectDate = () => {
-    fetchMovies(selectedDate);
-  };
-
   return (
     <div className="home">
-      <h2>List of Movies</h2>
+      <Typography variant='h5' style={{paddingLeft:'20px', marginTop: '20px'}}>List of Movies</Typography>
       <Box className="movies-cont" style={{ display: 'flex' }}>
-        <Box className="movie-list" style={{ width: '75%' }}>
+        <Box className="movie-list" style={{ width: '74%', padding: '20px' }}>
           <StyledPaper>
             {loading ? (
               <Typography>Loading...</Typography>
@@ -66,24 +62,24 @@ const Home = () => {
         </Box>
         <Box className="movie-option" style={{ width: '25%', paddingLeft: '15px' }}>
           <Box style={{ padding: '20px 15px', background: '#fff', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-          <TextField
-  id="date"
-  label="Select Date"
-  type="date"
-  value={selectedDate}
-  onChange={handleDateChange}
-  InputLabelProps={{
-    shrink: true,
-  }}
-  InputProps={{
-    inputProps: { min: new Date().toISOString().split('T')[0] } // Set min date to today
-  }}
-  style={{ width: '100%' }}
-/>
-
-
+            <TextField
+              id="date"
+              label="Select Date"
+              type="date"
+              value={selectedDate}
+              onChange={handleDateChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              InputProps={{
+                inputProps: {
+                  min: new Date().toISOString().split('T')[0], // Set min date to today
+                  disabled: new Date(selectedDate) < new Date().setHours(0, 0, 0, 0) // Disable if date is less than today
+                }
+              }}
+              style={{ width: '100%' }}
+            />
           </Box>
-          
         </Box>
       </Box>
     </div>

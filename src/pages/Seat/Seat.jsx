@@ -102,11 +102,11 @@ function Seat() {
 
     return (
         <SeatBox className="seat-cont" styled={{display: "flex", justifyContent: "space-between"}} >
-            <Box className="movie-details" style={{width: "25%", alignItems:"center", textAlign: "center"}}>
+            <Box className="movie-details" style={{width: "25%", alignItems:"center", textAlign: "center",paddingLeft:'20px', marginTop: '20px' }}>
                 
                 <Box className="movie-image" style={{ width: '100%' }}>
                     <Box className="movie-image" >
-                        <img src="" alt={movie.m_poster} style={{ width: '300px', height: '400px' }} />                           
+                        <img src={`/${movie.m_poster}`}  alt={movie.m_poster} style={{ width: '300px', height: '400px' }} />                           
                     </Box>
                 </Box>
                     <Typography variant='h5'><b>{movie.m_title}</b></Typography>
@@ -129,19 +129,23 @@ function Seat() {
                     
             </Box>
             <Box className="chair-details" style={{ width: "45%", marginTop: '20px', padding: '20px 15px', background: '#fff', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' , height: '85vh', padding: '20px' }}>
-            {selectedTime && (
-            <Typography variant='h6' style={{alignContent:"center", textAlign:"center", margingTop:"30px", fontWeight:"600" }}>{`SEAT LAYOUT (${formatTime(selectedTime.a_starttime)} - ${formatTime(selectedTime.a_endtime)} )`}</Typography>
+            {/* {selectedTime && (
+            <Typography variant='h6' style={{alignContent:"center", textAlign:"center", margingTop:"30px", fontWeight:"600" }}>
+                {`SEAT LAYOUT (${formatTime(selectedTime.a_starttime)} - ${formatTime(selectedTime.a_endtime)} )`}
+            </Typography>
+            )} */}
+            {selectedTime === null && (
+                <Typography style={{alignContent:"center", textAlign:"center", marginTop: "250px"}}> 
+                    Display Seat Layout
+                </Typography>
             )}
-                {selectedTime === null && (
-                    <Typography style={{alignContent:"center", textAlign:"center", marginTop: "250px"}}> Display Seat Layout</Typography>
-                )}
                 <Box style={{width:'100%'}}>
                     <AiringTimeDetails selectedTime={selectedTime} onSelectedSeatsChange={handleSelectedSeatsChange} />
 
                 </Box>
 
             </Box>
-            <Box className="seat-tab" style={{width: "20%", padding: '30px'}}>
+            <Box className="seat-tab" style={{width: "25%", padding: '30px'}}>
                 {/* SELECT DATE */}
                 <Typography variant='h6' style={{alignContent:"center", textAlign:"center", margingTop:"30px", fontWeight:"600" }}>TIME SLOT SECTION</Typography>
                 <Select
@@ -178,7 +182,7 @@ function Seat() {
                     <Typography style={{marginTop:'-20px', textAlign:"center"}} variant='body2'>
                         Select date to display time slot {selectedDate}
                     </Typography>
-                     )}
+                )}
                     {Array.isArray(airingTimes) && airingTimes.map((time) => {
                         const startTime = new Date(time.a_starttime);
                         const isDisabled = startTime <= new Date();
