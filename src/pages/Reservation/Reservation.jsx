@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, TableCell, TableContainer, Table, TableHead, TableRow, Paper, TableBody, Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import styled from '@emotion/styled';
+
 
 
 export default function Reservation() {
@@ -9,7 +11,19 @@ export default function Reservation() {
     const [selectedReservationId, setSelectedReservationId] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
 
-
+    const StyledPaper = styled(Paper)({
+        maxHeight: 640,
+        overflow: 'auto',
+        backgroundColor: 'transparent',
+        boxShadow: 'none',
+        '&::-webkit-scrollbar': {
+          width: '0.4rem'
+        },
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: '#ccc',
+          borderRadius: '4px'
+        }
+      });
 
 
     // handle filter
@@ -95,8 +109,8 @@ export default function Reservation() {
     
     return (
         
-        <Box className='reserv'>
-        <Paper>
+        <Box className='reserv' style={{padding: '50px'}}>
+        <Paper style={{padding: '20px'}}>
             <Box style={{display:"flex", width:"100%", justifyContent:"space-between"}}>
               <Box style={{padding: "20px 10px" }}>
                 <TextField
@@ -136,10 +150,11 @@ export default function Reservation() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
+                        
                         {/* DISPLAY WITH FILTER  */}
                         {filteredReserve.map((row) => (
                             <TableRow key={row._id}>
-                                <TableCell>{row.res_id} {row.a_id}</TableCell>
+                                <TableCell>{row.res_id}</TableCell>
                                 <TableCell>{`${row.f_name} ${row.m_name} ${row.l_name}`}</TableCell>
                                 <TableCell>{row.senior}</TableCell>
                                 <TableCell>{row.seat.join(', ')}</TableCell>

@@ -10,18 +10,7 @@ const MoreDetails = styled(Box)({
     marginTop: '5px',
     justifyContent: 'space-between'
 });
-const LegendBox = styled(Box)({
-    height: '10px',
-    width: '10px',
-    padding: '5px',
-    marginRight: '10px',
-    marginTop:'5px'
-});
 
-const Legend = styled(Box)({
-    display: 'flex',
-    marginTop: '5px'
-});
 const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
     const [selectedSeats, setSelectedSeats] = useState([]);
     console.log(selectedSeats);
@@ -68,8 +57,9 @@ const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
                         key={index}
                         onClick={() => handleSeatClick(seat)}
                         disabled={seat.is_occupied}
-                        variant={isSeatSelected ? "contained" : "outlined"}
-                        style={{ color: seat.is_occupied ? '#f57c00' : (isSeatSelected ? '#fff' : '#000'), padding:"-2px" }}
+                        variant="contained"
+                        style={{
+                            backgroundColor: seat.is_occupied ? '#f57c00' : (isSeatSelected ? '#0288d1' : '#388e3c'), padding:"-2px", color:'#fff' }}
                     >
                         {seat.position}
                        
@@ -101,43 +91,34 @@ const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
             </Box>
             
             <Box style={{ marginTop: '10px' , alignItems:"center", textAlign:"center", padding: "0px 50px"}}>
-                <Typography style={{ display: 'flex', flexDirection: 'column' }}>
+                <Box mb={1}><Typography variant="caption">SCREEN</Typography></Box>
+                <Typography  style={{ display: 'flex', flexDirection: 'column' }}>
                     
                     {renderSeatGrid()}
                 </Typography>
+                <Box style={{display: 'flex', justifyContent: 'space-between', marginTop: "2px"}}>
+                    <Box><Typography variant="caption">EXIT</Typography></Box> 
+                    <Box><Typography variant="caption">ENTRANCE</Typography></Box>
+                </Box>
             </Box>
                 
-            <Box style={{display:"flex", justifyContent:"space-between", maginTop: '30px'}}>
-                <Box style={{width:'50%', padding: '0 20px'}}>
-                    <Typography><b>MORE DETAILS</b></Typography>
+            <Box style={{ maginTop: '30px'}}>
+                <Box style={{display:"flex", justifyContent:"space-between", padding: '0 20px'}}>
+                    
                     <MoreDetails> 
-                        <Typography variant='caption'><b>PRICE: </b></Typography>
-                        <Typography variant='caption'> {a_price}</Typography>
+                        <Typography  variant='h6'><b>PRICE: </b></Typography>
+                        <Typography  variant='h6'> {a_price}</Typography>
                     </MoreDetails>
                     <MoreDetails> 
-                        <Typography variant='caption'><b>TYPE: </b></Typography>
-                        <Typography variant='caption'> {a_type.toUpperCase()}</Typography>
+                        <Typography variant='h6' ><b>TYPE: </b></Typography>
+                        <Typography  variant='h6'> {a_type.toUpperCase()}</Typography>
                     </MoreDetails>
                     <MoreDetails> 
-                        <Typography variant='caption'><b>CINEMA: </b></Typography>
-                        <Typography variant='caption'> {a_cinema}</Typography>
+                        <Typography variant='h6'><b>CINEMA: </b></Typography>
+                        <Typography variant='h6'> {a_cinema}</Typography>
                     </MoreDetails>
                 </Box>
-                <Box style={{width:'50%', padding: '0 20px'}}>
-                    <Typography><b>LEGEND</b></Typography>
-                    <Legend >
-                        <LegendBox style={{background:'#388e3c'}}></LegendBox>
-                        <Typography variant='caption'>Available Seats</Typography>
-                    </Legend>
-                    <Legend >
-                        <LegendBox style={{background:'#f57c00'}}></LegendBox>
-                        <Typography variant='caption'>Unavailable Seats </Typography>
-                    </Legend>
-                    <Legend >
-                        <LegendBox style={{background:'#0288d1'}}></LegendBox>
-                        <Typography variant='caption'>Selected Seats </Typography>
-                    </Legend>
-                </Box>
+                
                     
 
             </Box>
