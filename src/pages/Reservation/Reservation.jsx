@@ -128,9 +128,9 @@ export default function Reservation() {
                       value={isCancelledFilter}
                       onChange={(e) => setIsCancelledFilter(e.target.value)}
                     >
+                        <MenuItem value="all">All</MenuItem>
                         <MenuItem value="active">Active</MenuItem>
                         <MenuItem value="cancelled">Cancelled</MenuItem>
-                        <MenuItem value="all">All</MenuItem>
                     </Select>
                   </FormControl>
               </Box>
