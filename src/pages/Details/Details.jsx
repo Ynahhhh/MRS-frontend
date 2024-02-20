@@ -59,7 +59,7 @@ export default function Details() {
             res_id: currentDateTime,
             seat: decodedSelectedSeats,
             amt_pay: totalPrice,
-            is_cancel: false,
+            isCancel: false,
             m_id: movie._id,
             a_id: airing._id
         };
