@@ -162,7 +162,7 @@ function Seat() {
            
             {selectedTime === null && (
                 <Typography style={{alignContent:"center", textAlign:"center", marginTop: "250px"}}> 
-                    Display Seat Layout
+                    Select time slot first to display seat layout.
                 </Typography>
             )}
                 <Box style={{width:'100%'}}>
@@ -221,7 +221,7 @@ function Seat() {
                 <Box style={{ marginTop: '25px'}}>
                 {selectedTime && (
                 <Typography variant='body1' style={{marginBottom: '10px',alignContent:"center", textAlign:"center", margingTop:"30px", fontWeight:"600" }}>
-                    {`Time: (${formatTime(selectedTime.a_starttime)} - ${formatTime(selectedTime.a_endtime)} )`}
+                    {`Time: ${formatTime(selectedTime.a_starttime)} - ${formatTime(selectedTime.a_endtime)} `}
                 </Typography>
                 )}
                 {selectedDate === "" && (

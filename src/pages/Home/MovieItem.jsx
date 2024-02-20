@@ -48,12 +48,12 @@ const MovieItem = ({ movie }) => {
             <Typography variant="h6">{movie.m_title}</Typography>
           </Box>
           <MovieDetails>{movie.m_desc}</MovieDetails>
-          <MoreTypography>
+          <MoreTypography >
             <b>Genre:</b> {movie.m_genre} <b>|</b> <b>Duration:</b> {movie.m_hrs} hrs
             <b> | Now Showing  </b> {formatTime(startDate)} - {formatTime(endDate)}
           </MoreTypography>
-          <Box>
-            <Button component={Link} to={`/movies/${movie.m_id}`}>More Details</Button>
+          <Box style={{marginTop: '20px'}}>
+            <Button  variant='outlined' component={Link} to={`/movies/${movie.m_id}`}>More Details</Button>
           </Box>
         </Box>
       </Box>

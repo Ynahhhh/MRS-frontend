@@ -133,12 +133,8 @@ const AiringTimeDetails = ({ selectedTime, onSelectedSeatsChange }) => {
                     Proceed to Reservation
                 </Button>
             )}
-
             </Box>
-            
-            
         </Box>
-       
     );
 };
 
