@@ -158,7 +158,7 @@ export default function Reservation() {
                                 <TableCell>{`${row.f_name} ${row.m_name} ${row.l_name}`}</TableCell>
                                 <TableCell>{row.senior}</TableCell>
                                 <TableCell>{row.seat.join(', ')}</TableCell>
-                                <TableCell>{row.amt_pay}</TableCell>
+                                <TableCell>PHP {row.amt_pay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                                 <TableCell>{row.isCancel ? 'Yes' : 'No'}</TableCell>
                                 <TableCell>
                                     {!row.isCancel ? 

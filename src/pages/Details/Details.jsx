@@ -170,14 +170,17 @@ export default function Details() {
                 if (data && data.a_date) {
                     data.a_date = data.a_date.substring(0, 10); // or data.m_date.split('T')[0];
                 }
-                // Extracting the time part from m_starttime
+
+                // or data.m_starttime.split('T')[1].substring(0, 5);
                 if (data && data.a_starttime) {
-                    data.a_starttime = data.a_starttime.substring(11, 16); // or data.m_starttime.split('T')[1].substring(0, 5);
+                    data.a_starttime = formatMilitaryTime(data.a_starttime.substring(11, 16));
                 }
-                // Extracting the time part from m_endtime
+                
+                // or data.m_endtime.split('T')[1].substring(0, 5);
                 if (data && data.a_endtime) {
-                    data.a_endtime = data.a_endtime.substring(11, 16); // or data.m_endtime.split('T')[1].substring(0, 5);
+                    data.a_endtime = formatMilitaryTime(data.a_endtime.substring(11, 16));
                 }
+
                 // Calculate duration in hours and minutes
                 const startTime = new Date(`2000-01-01T${data.a_starttime}:00`);
                 const endTime = new Date(`2000-01-01T${data.a_endtime}:00`);
@@ -226,14 +229,50 @@ export default function Details() {
         const day = currentDate.getDate(); // Day of the month (1-31)
     
         // Get the current time
-        const hours = currentDate.getHours(); // Hour (0-23)
-        const minutes = currentDate.getMinutes(); // Minutes (0-59)
-        const seconds = currentDate.getSeconds(); // Seconds (0-59)
+        const hours = (currentDate.getHours()).toString().padStart(2, '0'); // Hour (01-60)
+        const minutes = (currentDate.getMinutes()).toString().padStart(2, '0'); // Minutes (01-60)
+        const seconds = (currentDate.getSeconds()).toString().padStart(2, '0'); // Seconds (01-60)
     
         // Construct a string representation of the current date and time
         const currentDateTime = `${year}${month}${day}${hours}${minutes}${seconds}`;
     
         return currentDateTime;
+    }
+
+    function formatMilitaryTime(militaryTime) {
+        // Extract hours and minutes
+        let [hours, minutes] = militaryTime.split(':');
+    
+        // Determine period (AM/PM)
+        let period = 'AM';
+        if (hours >= 12) {
+            period = 'PM';
+            if (hours > 12) {
+                hours -= 12;
+            }
+        }
+    
+        // Convert '00:00' to '12:00 AM' instead of '0:00 AM'
+        if (hours === '00') {
+            hours = '12';
+        }
+    
+        // Format the time with AM/PM
+        let normalTime = `${hours}:${minutes} ${period}`;
+    
+        // Convert to Philippine Time (UTC+8)
+        let timeInPhilippineTime = new Date(`January 1, 2024 ${normalTime}`);
+        timeInPhilippineTime.setHours(timeInPhilippineTime.getHours() + 8);
+    
+        // Format Philippine time
+        let phHours = timeInPhilippineTime.getHours();
+        let phMinutes = timeInPhilippineTime.getMinutes();
+        let phPeriod = phHours >= 12 ? 'PM' : 'AM';
+        phHours = phHours % 12 || 12; // Convert to 12-hour format
+        let philippineTime = `${phHours}:${phMinutes.toString().padStart(2, '0')} ${phPeriod}`;
+    
+        // Return the formatted time
+        return philippineTime;
     }
     const currentDateTime = getCurrentDateTime();
     const MAX_ROWS_BEFORE_SCROLL = 5; // Maximum number of rows before enabling scroll
@@ -248,7 +287,7 @@ export default function Details() {
                     <Grid container spacing={2}>
                         {/* First row */}
                         <Grid item xs={11} marginLeft={0.5}>
-                            <Box sx={{ bgcolor: '#F6F5F5', height: '355px', boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.15)', padding: '10px' }} > 
+                            <Box sx={{ bgcolor: '#F6F5F5', height: '380px', boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.15)', padding: '10px' }} > 
                                 <Box textAlign="left" sx={{ display: 'flex', alignItems: 'center' }}>
                                     <Typography variant="h6" ml={1} fontWeight='bold'>RESERVATION DESCRIPTION</Typography>
                                     <Typography mt={0.5} ml={8} sx={{ fontSize: '15px' }}>RESERVATION ID: {currentDateTime}</Typography>
@@ -349,19 +388,15 @@ export default function Details() {
                         </Grid>
                         {/* Second row */}
                         <Grid item xs={11} marginLeft={0.5}>
-                            <Box sx={{ bgcolor: '#F6F5F5', height: '290px', boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.15)', padding: '10px' }} > 
+                            <Box sx={{ bgcolor: '#F6F5F5', height: '260px', boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.15)', padding: '10px' }} > 
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                     <Typography  variant="h6" ml={1} fontWeight='bold'>PAYMENT BREAKDOWN</Typography>
                                 </Box>
                                 <Divider sx={{ bgcolor: '#40A2E3', mt: 0.3, mb: 0.5, height: '2px' }} />
-                                <Box sx={{ marginLeft: '13px', marginTop: '10px' }}>
+                                <Box sx={{ marginLeft: '13px', marginTop: '15px' }}>
                                     <TableContainer component={Paper} sx={{ width: '98%' }}>
                                         <Table size="small" aria-label="a dense table">
                                             <TableBody sx={{ backgroundColor: '#EEEDEB' }}>
-                                                <TableRow>
-                                                    <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Type: </Typography></TableCell>
-                                                    <TableCell align="right"></TableCell>
-                                                </TableRow>
                                                 <TableRow>
                                                     <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Number of Seats: </Typography></TableCell>
                                                     <TableCell align="right">{decodedSelectedSeats.length}</TableCell>
@@ -422,6 +457,16 @@ export default function Details() {
                                         <Stack spacing={5} direction="row" marginTop={5} justifyContent="center">
                                             <Button 
                                                 variant='contained' 
+                                                onClick={handleConfirmPayment}
+                                                sx={{
+                                                    width:'100px',
+                                                    borderRadius: '5px'
+                                                }}
+                                            >
+                                                Confirm
+                                            </Button>
+                                            <Button 
+                                                variant='contained' 
                                                 onClick={handleCloseModal} 
                                                 sx={{
                                                     width:'100px',
@@ -433,16 +478,6 @@ export default function Details() {
                                                 }}
                                             >
                                                 Cancel
-                                            </Button>
-                                            <Button 
-                                                variant='contained' 
-                                                onClick={handleConfirmPayment}
-                                                sx={{
-                                                    width:'100px',
-                                                    borderRadius: '5px'
-                                                }}
-                                            >
-                                                Confirm
                                             </Button>
                                         </Stack>
                                     </Box>
@@ -509,7 +544,7 @@ export default function Details() {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody sx={{ backgroundColor: '#EEEDEB' }}>
-                                        {decodedSelectedSeats.map((seat, index) => (
+                                        {decodedSelectedSeats.sort((a, b) => a.localeCompare(b)).map((seat, index) => (
                                             <TableRow key={index}>
                                                 <TableCell align='center'>{seat}</TableCell>
                                                 <TableCell align='center'> PHP {airing ? airing.a_price.toFixed(2) : '-'}</TableCell>
