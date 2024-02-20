@@ -251,7 +251,7 @@ export default function Details() {
                             <Box sx={{ bgcolor: '#F6F5F5', height: '355px', boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.15)', padding: '10px' }} > 
                                 <Box textAlign="left" sx={{ display: 'flex', alignItems: 'center' }}>
                                     <Typography variant="h6" ml={1} fontWeight='bold'>RESERVATION DESCRIPTION</Typography>
-                                    <Typography mt={0.5} ml={8} mr={1} sx={{ fontSize: '15px' }}>RESERVATION ID: {currentDateTime}</Typography>
+                                    <Typography mt={0.5} ml={8} sx={{ fontSize: '15px' }}>RESERVATION ID: {currentDateTime}</Typography>
                                 </Box>
                                 <Divider sx={{ bgcolor: '#40A2E3', mt: 0.3, mb: 0.5, height: '1.5px' }} />
                                 <Box>
@@ -496,11 +496,11 @@ export default function Details() {
                     <Box sx={{ bgcolor: '#F6F5F5', height: '660px', boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.15)', padding: '10px' }} > 
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Typography  variant="h6" ml={1} fontWeight='bold'>SEAT RESERVED</Typography>
-                            <Typography mt={0.5} ml={25} mr={1}>Total Number of Seats Reserved: {decodedSelectedSeats.length}</Typography>
+                            <Typography mt={0.5} ml={28}>Total Number of Seats Reserved: {decodedSelectedSeats.length}</Typography>
                         </Box>
                         <Divider sx={{ bgcolor: '#40A2E3', mt: 0.3, mb: 0.5, height: '1.5px' }} />
                         <Box sx={{ alignItems: 'center', justifyContent: 'center', marginTop: '15px', marginLeft: '15px' }}>
-                            <TableContainer component={Paper} sx={{ width: '98%', maxHeight: MAX_ROWS_BEFORE_SCROLL * 102 + 20, overflowY: 'auto'  }}>
+                            <TableContainer component={Paper} sx={{ width: '98%', maxHeight: MAX_ROWS_BEFORE_SCROLL * 102 + 10, overflowY: 'auto'  }}>
                                 <Table size="small" aria-label="a dense table">
                                     <TableHead sx={{ backgroundColor: '#BBE2EC', position: 'sticky', top: 0, zIndex: 1000 }}>
                                         <TableRow>
