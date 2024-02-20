@@ -16,6 +16,19 @@ const MoreDetails = styled(Box)({
     justifyContent: 'space-between'
 });
 
+const LegendBox = styled(Box)({
+    height: '10px',
+    width: '10px',
+    padding: '5px',
+    marginRight: '10px',
+    marginTop:'5px'
+});
+
+const Legend = styled(Box)({
+    display: 'flex',
+    marginTop: '5px'
+});
+
 function Seat() {
     // GET THE DATA FROM URL
     const m_id = window.location.pathname.split('/')[2];   
@@ -235,6 +248,23 @@ function Seat() {
                     })}
                 </Box>
                 </StyledPaper>
+
+                {/*  */}
+                <Box style={{ marginTop:'20px', padding: '0 20px'}}>
+                    <Typography><b>LEGEND</b></Typography>
+                    <Legend >
+                        <LegendBox style={{background:'#388e3c'}}></LegendBox>
+                        <Typography variant='caption'>Available Seats</Typography>
+                    </Legend>
+                    <Legend >
+                        <LegendBox style={{background:'#f57c00'}}></LegendBox>
+                        <Typography variant='caption'>Unavailable Seats </Typography>
+                    </Legend>
+                    <Legend >
+                        <LegendBox style={{background:'#0288d1'}}></LegendBox>
+                        <Typography variant='caption'>Selected Seats </Typography>
+                    </Legend>
+                </Box>
             </Box>
             
         </SeatBox>
