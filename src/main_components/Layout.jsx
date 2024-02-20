@@ -19,7 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { Link, Outlet } from 'react-router-dom';
 
 import HomeIcon from '@mui/icons-material/Home';
-import LiveTvIcon from '@mui/icons-material/LiveTv';
+// import LiveTvIcon from '@mui/icons-material/LiveTv';
 import WeekendIcon from '@mui/icons-material/Weekend';
 
 const drawerWidth = 240;
@@ -160,12 +160,12 @@ export default function Layout() {
           </ListItem>
 
           {/* go to movies */}
-          <ListItem key='Movies' disablePadding>
+          {/* <ListItem key='Movies' disablePadding>
             <ListItemButton component={Link} to="/movies"> 
                 <ListItemIconStyled><LiveTvIcon/></ListItemIconStyled>
                 <ListItemTextStyled primary='Movies' />
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
         
         
           {/* go to reservation */}

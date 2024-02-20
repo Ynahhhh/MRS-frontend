@@ -13,26 +13,16 @@ const StyledModal = styled(Modal)`
   align-items: center;
   justify-content: center;
 `;
-const GrayBackdrop = styled(Backdrop)`
-  background-color: rgba(0, 0, 0, 0.2);
-`;
+
+const GrayBackdrop = styled(Backdrop)(() => ({
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Grayed backdrop color
+}));
 
 export default function Details() {
 
-    // *******************************
     // these are fetching data under specific airing and movie
     const [airing, setAiring] = useState(null);
     const [movie, setMovie] = useState(null);
-
-    // console.log(airing);
-    // console.log(movie);
-    // Check if airing is not null before accessing its _id property
-    if (airing && airing._id) {
-        console.log("shit", airing._id);
-    } else {
-        console.log('Airing is null or _id is not available');
-    }
-
 
     // ******************************
     const [openModal, setOpenModal] = useState(false);
@@ -69,7 +59,7 @@ export default function Details() {
             res_id: currentDateTime,
             seat: decodedSelectedSeats,
             amt_pay: totalPrice,
-            is_cancel: false,
+            isCancel: false,
             m_id: movie._id,
             a_id: airing._id
         };
@@ -116,7 +106,6 @@ export default function Details() {
         } catch (error) {
             console.error('Error updating seat occupancy:', error);
         }
-    
         // Reset form fields and state variables
         setFirstName('');
         setMiddleName('');
@@ -124,8 +113,6 @@ export default function Details() {
         decodedSelectedSeats = [];
         setPaymentConfirmed(false);
     };
-    
-
     const handleUpdateSeats = () => {
         emptySelectedSeats();
     };
@@ -140,9 +127,8 @@ export default function Details() {
             setSeniorCount(prevCount => prevCount + 1);
     };
     const handleDecrement = () => {
-        if (seniorCount > 0) {
+        if (seniorCount > 0)
             setSeniorCount(prevCount => prevCount - 1);
-        }
     };
  
     useEffect(() => {
@@ -166,7 +152,6 @@ export default function Details() {
         calculateTotalPrice();
     }, [seniorCount, airing, decodedSelectedSeats]);
 
-
     // *******************************************
     // get airing
     useEffect(() => {
@@ -181,7 +166,7 @@ export default function Details() {
                 throw new Error('Failed to fetch movie');
             }
             const data = await response.json();
-            // Extracting the date part
+                // Extracting the date part
                 if (data && data.a_date) {
                     data.a_date = data.a_date.substring(0, 10); // or data.m_date.split('T')[0];
                 }
@@ -189,7 +174,6 @@ export default function Details() {
                 if (data && data.a_starttime) {
                     data.a_starttime = data.a_starttime.substring(11, 16); // or data.m_starttime.split('T')[1].substring(0, 5);
                 }
-
                 // Extracting the time part from m_endtime
                 if (data && data.a_endtime) {
                     data.a_endtime = data.a_endtime.substring(11, 16); // or data.m_endtime.split('T')[1].substring(0, 5);
@@ -211,9 +195,7 @@ export default function Details() {
         }
     };
 
-
     // get movie
-
     useEffect(() => {
         fetchMovieById(movieId); 
     }, [movieId]);
@@ -234,7 +216,6 @@ export default function Details() {
     };
         
     // *******************************************
-
     function getCurrentDateTime() {
         // Create a new Date object with the current time and date
         const currentDate = new Date();
@@ -260,19 +241,19 @@ export default function Details() {
     const discount = (airing && airing.a_type.toUpperCase() === 'REGULAR' && seniorCount > 0) ? (airing.a_price * 0.8 * seniorCount) : 0;
 
     return (
-        <Box padding="20px">
-            <Grid container spacing={2}>
+        <Box padding="10px">
+            <Grid container spacing={1} justifyContent="center" alignItems="center">
                 {/* First column */}
-                <Grid item xs={6}>
+                <Grid item xs={6} >
                     <Grid container spacing={2}>
                         {/* First row */}
-                        <Grid item xs={12}>
-                            <Box sx={{ bgcolor: '#EEF5FF', height: '375px', boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.25)', padding: '10px' }} > 
+                        <Grid item xs={11} marginLeft={0.5}>
+                            <Box sx={{ bgcolor: '#F6F5F5', height: '355px', boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.15)', padding: '10px' }} > 
                                 <Box textAlign="left" sx={{ display: 'flex', alignItems: 'center' }}>
                                     <Typography variant="h6" ml={1} fontWeight='bold'>RESERVATION DESCRIPTION</Typography>
-                                    <Typography mt={0.5} ml={18} mr={1} sx={{ fontSize: '15px' }}>RESERVATION ID: {currentDateTime}</Typography>
+                                    <Typography mt={0.5} ml={8} mr={1} sx={{ fontSize: '15px' }}>RESERVATION ID: {currentDateTime}</Typography>
                                 </Box>
-                                <Divider sx={{ bgcolor: '#40A2E3', mt: 0.3, mb: 0.5, height: '2.5px' }} />
+                                <Divider sx={{ bgcolor: '#40A2E3', mt: 0.3, mb: 0.5, height: '1.5px' }} />
                                 <Box>
                                     <Typography ml={1} variant="h7">CUSTOMER DESCRIPTION</Typography>
                                 </Box>
@@ -333,7 +314,7 @@ export default function Details() {
                                             <Typography ml={1} variant="h7">MOVIE DESCRIPTION</Typography>
                                         </Box>
                                         <Box alignContent="center">
-                                            <Grid container spacing={2} ml={2} mt={0.02}>
+                                            <Grid container spacing={1.5} ml={2} mt={0.02}>
                                                 <Grid item xs={4}>
                                                     <Typography sx={{ fontStyle: 'italic', fontSize: '0.9rem', textAlign: 'left' }}>Movie Title: {movie.m_title}</Typography>
                                                 </Grid>
@@ -367,16 +348,16 @@ export default function Details() {
                             </Box>
                         </Grid>
                         {/* Second row */}
-                        <Grid item xs={12}>
-                            <Box sx={{ bgcolor: '#EEF5FF', height: '293px', boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.25)', padding: '10px' }} > 
+                        <Grid item xs={11} marginLeft={0.5}>
+                            <Box sx={{ bgcolor: '#F6F5F5', height: '290px', boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.15)', padding: '10px' }} > 
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                     <Typography  variant="h6" ml={1} fontWeight='bold'>PAYMENT BREAKDOWN</Typography>
                                 </Box>
-                                <Divider sx={{ bgcolor: '#40A2E3', mt: 0.3, mb: 0.5, height: '2.5px' }} />
+                                <Divider sx={{ bgcolor: '#40A2E3', mt: 0.3, mb: 0.5, height: '2px' }} />
                                 <Box sx={{ marginLeft: '13px', marginTop: '10px' }}>
                                     <TableContainer component={Paper} sx={{ width: '98%' }}>
                                         <Table size="small" aria-label="a dense table">
-                                            <TableBody sx={{ backgroundColor: '#EEF5FF' }}>
+                                            <TableBody sx={{ backgroundColor: '#EEEDEB' }}>
                                                 <TableRow>
                                                     <TableCell align='left'><Typography fontWeight='bold' fontSize='small'>Type: </Typography></TableCell>
                                                     <TableCell align="right"></TableCell>
@@ -401,12 +382,12 @@ export default function Details() {
                                         </Table>
                                     </TableContainer>
                                 </Box>
-                                <Stack spacing={10} direction="row" marginTop={2.5} marginLeft={59.5}>
+                                <Stack spacing={5} direction="row" marginTop={2.5} marginLeft={49.5}>
                                     <Button 
                                         variant="contained" 
                                         onClick={handleOpenModal}
                                         sx={{
-                                            width:'205px',
+                                            width:'210px',
                                             borderRadius: '5px'
                                         }}
                                     >
@@ -416,20 +397,20 @@ export default function Details() {
                                 {/* Payment modal */}
                                 <StyledModal
                                     open={openModal}
-                                    // onClose={handleCloseModal}
-                                    BackdropComponent={GrayBackdrop}
-                                    BackdropProps={{ onClick: handleBackdropClick }}
                                 >
                                     <Box
                                         sx={{
                                         width: '400px', 
                                         backgroundColor: 'white', 
                                         borderRadius: '10px', 
-                                        padding: '10px', 
+                                        padding: '25px', 
                                         display: 'flex',
                                         flexDirection: 'column',
                                         alignItems: 'center', 
+                                        boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.5)'
                                         }}
+                                        BackdropComponent={GrayBackdrop}
+                                        BackdropProps={{ onClick: handleBackdropClick }}
                                     >
                                         <img src={confirmPaymentIcon} alt="Confirm Payment Icon" style={{ width: '150px', height: '150px' }} />
                                         <Typography variant="h6" sx={{ mt: "5px", mb: "15px", fontWeight: 'bold' }}>CONFIRM PAYMENT</Typography>
@@ -468,10 +449,7 @@ export default function Details() {
                                 </StyledModal>
                                 
                                 <StyledModal
-                                        open={paymentConfirmed} 
-                                        // onClose={handlePaymentSuccessModalClose} 
-                                        BackdropComponent={GrayBackdrop} 
-                                        BackdropProps={{ onClick: handleBackdropClick }}
+                                        open={paymentConfirmed}
                                 >
                                     <Box 
                                         sx={{
@@ -481,8 +459,11 @@ export default function Details() {
                                         padding: '10px', 
                                         display: 'flex',
                                         flexDirection: 'column',
-                                        alignItems: 'center', 
+                                        alignItems: 'center',
+                                        boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.5)'
                                         }}
+                                        BackdropComponent={GrayBackdrop} 
+                                        BackdropProps={{ onClick: handleBackdropClick  }}
                                     >
                                         <img src={successPaymentIcon} alt="Success Payment Icon" style={{ width: '150px', height: '150px', alignItems: 'center', justifyContent: 'center' }} />   
                                         <Typography variant="h6" sx={{ mt: "15px", mb: "15px", fontWeight: 'bold' }}>PAYMENT SUCCESSFUL</Typography>
@@ -490,13 +471,12 @@ export default function Details() {
                                         <Typography>Please check your email for your reservation details.</Typography>
                                         <Button 
                                             as={Link}
-                                            to={`/movies/${movieId}`}
+                                            to="/"
                                             variant='contained'
                                             onClick={handlePaymentSuccessModalClose}
                                             sx={{
                                                 width:'100px',
                                                 marginTop: '25px',
-                                                //marginBottom: '50px',
                                                 borderRadius: '5px',
                                                 textDecoration:'none',
                                                 textAlign: 'center'
@@ -512,13 +492,13 @@ export default function Details() {
                 </Grid>
 
                 {/* Second column */}
-                <Grid item xs={6} height='100vh'>
-                    <Box sx={{ bgcolor: '#EEF5FF', height: '682.5px', boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.25)', padding: '10px' }} > 
+                <Grid item xs={6} marginLeft={-4}>
+                    <Box sx={{ bgcolor: '#F6F5F5', height: '660px', boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.15)', padding: '10px' }} > 
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Typography  variant="h6" ml={1} fontWeight='bold'>SEAT RESERVED</Typography>
-                            <Typography mt={0.5} ml={31.5} mr={1}>Total Number of Seats Reserved: {decodedSelectedSeats.length}</Typography>
+                            <Typography mt={0.5} ml={25} mr={1}>Total Number of Seats Reserved: {decodedSelectedSeats.length}</Typography>
                         </Box>
-                        <Divider sx={{ bgcolor: '#40A2E3', mt: 0.3, mb: 0.5, height: '2.5px' }} />
+                        <Divider sx={{ bgcolor: '#40A2E3', mt: 0.3, mb: 0.5, height: '1.5px' }} />
                         <Box sx={{ alignItems: 'center', justifyContent: 'center', marginTop: '15px', marginLeft: '15px' }}>
                             <TableContainer component={Paper} sx={{ width: '98%', maxHeight: MAX_ROWS_BEFORE_SCROLL * 102 + 20, overflowY: 'auto'  }}>
                                 <Table size="small" aria-label="a dense table">
@@ -528,7 +508,7 @@ export default function Details() {
                                             <TableCell align="center"><Typography fontWeight='bold' fontSize='small'>PRICE</Typography></TableCell>
                                         </TableRow>
                                     </TableHead>
-                                    <TableBody sx={{ backgroundColor: '#EEF5FF' }}>
+                                    <TableBody sx={{ backgroundColor: '#EEEDEB' }}>
                                         {decodedSelectedSeats.map((seat, index) => (
                                             <TableRow key={index}>
                                                 <TableCell align='center'>{seat}</TableCell>
@@ -539,7 +519,7 @@ export default function Details() {
                                 </Table>
                             </TableContainer>
                         </Box>
-                        <Stack spacing={10} direction="row" marginTop={6} marginLeft={67.5}>
+                        <Stack spacing={10} direction="row" marginTop={3} marginLeft={64.3}>
                             <Button 
                                 as={Link}
                                 to={`/movies/${movieId}`}

@@ -83,6 +83,7 @@ export default function Reservation() {
         });
         await Promise.all(updatedReserve);
         setOpenDialog(false);
+        window.location.reload(); // Reload the page after the updates
     };
 
     // request
