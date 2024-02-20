@@ -166,7 +166,7 @@ export default function Details() {
                 throw new Error('Failed to fetch movie');
             }
             const data = await response.json();
-            // Extracting the date part
+                // Extracting the date part
                 if (data && data.a_date) {
                     data.a_date = data.a_date.substring(0, 10); // or data.m_date.split('T')[0];
                 }
@@ -174,7 +174,6 @@ export default function Details() {
                 if (data && data.a_starttime) {
                     data.a_starttime = data.a_starttime.substring(11, 16); // or data.m_starttime.split('T')[1].substring(0, 5);
                 }
-
                 // Extracting the time part from m_endtime
                 if (data && data.a_endtime) {
                     data.a_endtime = data.a_endtime.substring(11, 16); // or data.m_endtime.split('T')[1].substring(0, 5);
